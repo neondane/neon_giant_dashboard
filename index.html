@@ -379,4 +379,167 @@ function render(){if(ct==='exec')renderExec();else if(ct==='weekly')renderWeekly
 window.addEventListener('resize',function(){setTimeout(render,80)});
 showFilters();render();
 
-</script></body></html>
+
+
+var CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vS7pPf9uJ1rytb3KquPUM7jOnn1pXlGnW4xZjbJ3WyhzZcWsS0jeDhxjWD9YhGivQ/pub?gid=907896165&single=true&output=csv';
+var REFRESH_MS=300000;
+
+function parseCSV(text){
+  var lines=text.split('\n');var headers=[];var rows=[];
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i].replace(/\r/g,'');if(!line)continue;
+    var cells=[];var inQ=false;var cell='';
+    for(var j=0;j<line.length;j++){
+      var ch=line[j];
+      if(inQ){if(ch==='"'){if(j+1<line.length&&line[j+1]==='"'){cell+='"';j++}else inQ=false}else cell+=ch}
+      else{if(ch==='"')inQ=true;else if(ch===','){cells.push(cell);cell=''}else cell+=ch}
+    }
+    cells.push(cell);
+    if(i===0)headers=cells;else rows.push(cells);
+  }
+  return{headers:headers,rows:rows};
+}
+
+function fuzzyMatch(label,targets){
+  var l=label.toLowerCase().replace(/[^a-z0-9]/g,'');
+  for(var i=0;i<targets.length;i++){
+    var t=targets[i][0].toLowerCase().replace(/[^a-z0-9]/g,'');
+    if(l===t||l.indexOf(t)>=0||t.indexOf(l)>=0)return targets[i][1];
+  }
+  return null;
+}
+
+var METRIC_MAP=[
+  ['Net Revenue','net_revenue'],['Local Labor','local_labor'],['Intrastate','intrastate'],['Interstate','interstate'],
+  ['Materials','materials'],['Additional Services','addl_services'],['Valuations','valuations'],['Discounts','discounts'],
+  ['Total Leads Received','leads'],['Total Jobs Booked','jobs_booked'],['Booked Revenue','booked_revenue'],
+  ['Booking %','booking_pct'],['Avg Booked Job','avg_booked_job'],
+  ['Jobs Completed','jobs_completed'],['Total Completed Job Revenue','completed_rev'],['Avg Completed Job Revenue','avg_completed_rev'],
+  ['Total Mover Hours','mover_hours'],['Revenue Per Mover Hour','rpmh'],
+  ['Inbound Call','inbound_calls'],['Outbound Call','outbound_calls'],['Answered %','answered_pct'],
+  ['Total Sessions','sessions'],['Google Organic Views','organic_views'],
+  ['Total Google Ad Spend','ad_spend'],['Total Google Conversions','conversions'],['Cost per Conversion','cost_per_conv'],
+  ['Google Reviews (total)','reviews_total'],['Google Reviews new','reviews_new'],['Review Conversion','review_conv_pct'],
+  ['Facebook Followers','facebook'],['Instagram Followers','instagram'],
+  ['Google — Leads','google_leads'],['Google — Jobs','google_jobs'],['Google — Revenue','google_rev'],['Google — Spend','google_spend'],
+  ['Google — Cost Per Lead','google_cpl'],['Google — Cost Per Job','google_cpj'],['Google — MER','google_mer'],
+  ['Facebook — Leads','fb_leads'],['Facebook — Jobs','fb_jobs'],['Facebook — Revenue','fb_rev'],['Facebook — Spend','fb_spend'],
+  ['Direct Mail — Leads','dm_leads'],['Direct Mail — Jobs','dm_jobs'],['Direct Mail — Revenue','dm_rev'],['Direct Mail — Spend','dm_spend'],
+  ['Snowball — Leads','snow_leads'],['Snowball — Jobs','snow_jobs'],['Snowball — Revenue','snow_rev'],['Snowball — Spend','snow_spend'],
+  ['Affiliates — Leads','aff_leads'],['Affiliates — Jobs','aff_jobs'],['Affiliates — Revenue','aff_rev'],['Affiliates — Spend','aff_spend'],
+  ['Organic — Leads','org_leads'],['Organic — Jobs','org_jobs'],['Organic — Revenue','org_rev'],['Organic — Revenue Per Lead','org_rpl'],
+  ['Brand Marketing — Spend','brand_spend'],
+  ['Total Marketing Leads','total_mktg_leads'],['Total Marketing Jobs','total_mktg_jobs'],['Total Marketing Revenue','total_mktg_rev'],
+  ['Paid Marketing Spend','paid_spend'],['Brand Marketing Spend','brand_spend_ref'],['Total Marketing Spend','total_spend'],
+  ['Paid Marketing Revenue','paid_rev'],['Paid Marketing MER','paid_mer'],
+  ['Overall Marketing Efficiency','overall_mer'],['Overall Cost Per Lead','overall_cpl'],['Overall Cost Per Job','overall_cpj']
+];
+
+function loadCSV(){
+  fetch(CSV_URL).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(text){
+    var csv=parseCSV(text);
+    if(!csv.headers.length||!csv.rows.length){console.warn('CSV: empty');return}
+    // Build week structure from headers (columns after metric label)
+    var weekCols=[];var monthRow=null;
+    // Find MONTH row to get month labels
+    for(var ri=0;ri<csv.rows.length;ri++){
+      var label=csv.rows[ri][0]||'';
+      if(label.toUpperCase()==='MONTH'){monthRow=csv.rows[ri];break}
+    }
+    // Find METRIC row to get week labels
+    var metricRow=null;
+    for(var ri=0;ri<csv.rows.length;ri++){
+      var label=csv.rows[ri][0]||'';
+      if(label.toUpperCase()==='METRIC'){metricRow=csv.rows[ri];break}
+    }
+    // If headers contain week labels directly
+    var weekLabels=[];var weekMonths=[];
+    var src=metricRow||csv.headers;
+    for(var c=1;c<src.length;c++){
+      var wl=src[c]||'';
+      var wm=monthRow?monthRow[c]||'':'';
+      if(wl){weekLabels.push(wl);weekMonths.push(wm)}
+    }
+    if(weekLabels.length===0){console.warn('CSV: no weeks found');return}
+    // Build new weeks array
+    var newWeeks=[];for(var i=0;i<weekLabels.length;i++){newWeeks.push({label:weekLabels[i],month:weekMonths[i]})}
+    // Build new weekly data
+    var newWeekly={};
+    for(var ri=0;ri<csv.rows.length;ri++){
+      var row=csv.rows[ri];var label=row[0]||'';
+      var key=fuzzyMatch(label,METRIC_MAP);
+      if(!key)continue;
+      var vals=[];
+      for(var c=1;c<1+weekLabels.length;c++){
+        var raw=(row[c]||'').replace(/[$,%\s]/g,'');
+        var v=raw===''||raw==='-'?null:parseFloat(raw);
+        vals.push(isNaN(v)?null:v);
+      }
+      newWeekly[key]=vals;
+    }
+    // Only update if we got meaningful data
+    var hasData=false;
+    if(newWeekly.net_revenue){for(var i=0;i<newWeekly.net_revenue.length;i++){if(newWeekly.net_revenue[i]>0)hasData=true}}
+    if(!hasData){console.warn('CSV: no revenue data found');return}
+    // Merge into D
+    D.weeks=newWeeks;
+    for(var k in newWeekly){D.weekly[k]=newWeekly[k]}
+    // Recompute monthly rollup from weekly data
+    recomputeMonthly();
+    console.log('CSV loaded: '+weekLabels.length+' weeks, '+Object.keys(newWeekly).length+' metrics');
+    var ts=document.getElementById('csv-ts');
+    if(ts)ts.textContent='Last updated: '+new Date().toLocaleTimeString();
+    render();
+  }).catch(function(err){
+    console.warn('CSV load failed:',err.message);
+  });
+}
+
+function recomputeMonthly(){
+  var moMap={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+  var w=D.weekly;var weeks=D.weeks;
+  // Sum-based monthly metrics
+  var sumKeys=['net_revenue','leads','jobs_booked','booked_revenue','jobs_completed','completed_rev',
+    'ad_spend','conversions','mover_hours','inbound_calls','outbound_calls','sessions','organic_views',
+    'reviews_new','google_leads','google_jobs','google_rev','google_spend',
+    'dm_leads','dm_jobs','dm_rev','dm_spend','snow_leads','snow_jobs','snow_rev','snow_spend',
+    'aff_leads','aff_jobs','aff_rev','aff_spend','org_leads','org_jobs','org_rev',
+    'total_mktg_leads','total_mktg_jobs','total_mktg_rev','paid_spend','total_spend','paid_rev'];
+  var mrKeyMap={'net_revenue':'7','leads':'25','jobs_booked':'27','booked_revenue':'29',
+    'jobs_completed':'35','completed_rev':'37','ad_spend':'54','conversions':'56',
+    'mover_hours':'107','inbound_calls':'42','outbound_calls':'44','sessions':'49','organic_views':'51',
+    'google_leads':'69','google_rev':'71','google_spend':'72',
+    'dm_leads':'77','dm_rev':'79','dm_spend':'80',
+    'snow_leads':'81','snow_rev':'83','snow_spend':'84',
+    'aff_leads':'85','aff_rev':'87','aff_spend':'88',
+    'org_leads':'89','org_rev':'91',
+    'total_mktg_leads':'94','total_mktg_rev':'96',
+    'paid_spend':'97','total_spend':'99','paid_rev':'100'};
+  for(var sk=0;sk<sumKeys.length;sk++){
+    var key=sumKeys[sk];var mrKey=mrKeyMap[key];
+    if(!mrKey||!w[key])continue;
+    var monthly=[0,0,0,0,0,0,0,0,0,0,0,0,0];
+    for(var i=0;i<weeks.length;i++){
+      var mo=weeks[i].month?weeks[i].month.toUpperCase().substring(0,3):'';
+      var mi=moMap[mo];if(mi==null)continue;
+      monthly[mi]+=n(w[key][i]);
+    }
+    monthly[12]=0;for(var m=0;m<12;m++)monthly[12]+=monthly[m];
+    if(D.monthly_rollup[mrKey])D.monthly_rollup[mrKey].values=monthly;
+  }
+  // Derived: Booking %
+  if(D.monthly_rollup['31']){var bp=[];var la=getMR('25'),ja=getMR('27');for(var m=0;m<13;m++)bp.push(n(la[m])>0?n(ja[m])/n(la[m]):null);D.monthly_rollup['31'].values=bp}
+  // RPMH
+  if(D.monthly_rollup['108']){var rp=[];var ra=getMR('7'),ha=getMR('107');for(var m=0;m<13;m++)rp.push(n(ha[m])>0?n(ra[m])/n(ha[m]):null);D.monthly_rollup['108'].values=rp}
+  // Cost per conversion
+  if(D.monthly_rollup['58']){var cp=[];var sa=getMR('54'),ca=getMR('56');for(var m=0;m<13;m++)cp.push(n(ca[m])>0?n(sa[m])/n(ca[m]):null);D.monthly_rollup['58'].values=cp}
+}
+
+// Initial load + auto-refresh
+loadCSV();
+setInterval(loadCSV,REFRESH_MS);
+
+</script><div id="csv-footer" style="text-align:center;padding:8px;font-size:8px;color:#3d4f6a;font-family:Sora,sans-serif;letter-spacing:1px">Data source: Neon Giant Scorecard (Google Sheets) &middot; <span id="csv-ts">Connecting...</span> &middot; Auto-refresh every 5 min</div></body></html>
