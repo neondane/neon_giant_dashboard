@@ -411,6 +411,13 @@ function fuzzyMatch(label,targets){
     var t=targets[i][0].toLowerCase().replace(/[^a-z0-9]/g,'');
     if(l===t||l.indexOf(t)>=0||t.indexOf(l)>=0)return targets[i][1];
   }
+  // Try partial match on first meaningful words
+  var words=label.toLowerCase().split(/[^a-z]+/).filter(function(w){return w.length>3});
+  for(var i=0;i<targets.length;i++){
+    var tw=targets[i][0].toLowerCase().split(/[^a-z]+/).filter(function(w){return w.length>3});
+    var match=0;for(var j=0;j<tw.length;j++){if(words.indexOf(tw[j])>=0)match++}
+    if(match>=2||(tw.length===1&&match===1))return targets[i][1];
+  }
   return null;
 }
 
@@ -441,66 +448,87 @@ var METRIC_MAP=[
 ];
 
 function loadCSV(){
-  console.log('CSV: Fetching from '+CSV_URL);fetch(CSV_URL).then(function(r){console.log('CSV: Response status '+r.status);
+  console.log('CSV: Fetching...');
+  fetch(CSV_URL).then(function(r){
     if(!r.ok)throw new Error('HTTP '+r.status);
     return r.text();
   }).then(function(text){
-    var csv=parseCSV(text);
-    console.log('CSV: Parsed '+csv.rows.length+' rows, '+csv.headers.length+' columns');if(!csv.headers.length||!csv.rows.length){console.warn('CSV: empty data');return}
-    // Build week structure from headers (columns after metric label)
-    var weekCols=[];var monthRow=null;
-    // Find MONTH row to get month labels
-    for(var ri=0;ri<csv.rows.length;ri++){
-      var label=csv.rows[ri][0]||'';
-      if(label.toUpperCase()==='MONTH'){monthRow=csv.rows[ri];break}
+    var lines=text.split('\n');
+    // Find MONTH and METRIC rows
+    var monthRow=null,metricRow=null;
+    var allRows=[];
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i].replace(/\r/g,'');if(!line)continue;
+      // Parse CSV respecting quotes
+      var cells=[];var inQ=false;var cell='';
+      for(var j=0;j<line.length;j++){
+        var ch=line[j];
+        if(inQ){if(ch==='"'){if(j+1<line.length&&line[j+1]==='"'){cell+='"';j++}else inQ=false}else cell+=ch}
+        else{if(ch==='"')inQ=true;else if(ch===','){cells.push(cell.trim());cell=''}else cell+=ch}
+      }
+      cells.push(cell.trim());
+      allRows.push(cells);
+      var first=cells[0]||'';
+      if(first.toUpperCase()==='MONTH')monthRow=cells;
+      if(first.toUpperCase()==='METRIC')metricRow=cells;
     }
-    // Find METRIC row to get week labels
-    var metricRow=null;
-    for(var ri=0;ri<csv.rows.length;ri++){
-      var label=csv.rows[ri][0]||'';
-      if(label.toUpperCase()==='METRIC'){metricRow=csv.rows[ri];break}
-    }
-    // If headers contain week labels directly
+    if(!monthRow||!metricRow){console.warn('CSV: Could not find MONTH/METRIC rows');return}
+    console.log('CSV: Found '+allRows.length+' rows');
+    // Build week structure
     var weekLabels=[];var weekMonths=[];
-    var src=metricRow||csv.headers;
-    for(var c=1;c<src.length;c++){
-      var wl=src[c]||'';
-      var wm=monthRow?monthRow[c]||'':'';
-      if(wl){weekLabels.push(wl);weekMonths.push(wm)}
+    for(var c=1;c<metricRow.length;c++){
+      var wl=metricRow[c]||'';var wm=monthRow[c]||'';
+      weekLabels.push(wl);weekMonths.push(wm);
     }
-    if(weekLabels.length===0){console.warn('CSV: no weeks found');return}
-    // Build new weeks array
     var newWeeks=[];for(var i=0;i<weekLabels.length;i++){newWeeks.push({label:weekLabels[i],month:weekMonths[i]})}
-    // Build new weekly data
+    // Parse numeric value from cell
+    function pv(s){
+      if(!s||s==='-'||s==='')return null;
+      var clean=s.replace(/[$,%\s"]/g,'').replace(/,/g,'');
+      if(clean===''||clean==='-')return null;
+      var v=parseFloat(clean);
+      // If original had %, it's already a percentage like 50.0% -> 50.0, convert to decimal
+      if(s.indexOf('%')>=0&&v>1)v=v/100;
+      return isNaN(v)?null:v;
+    }
+    // Map rows to metrics
     var newWeekly={};
-    for(var ri=0;ri<csv.rows.length;ri++){
-      var row=csv.rows[ri];var label=row[0]||'';
-      var key=fuzzyMatch(label,METRIC_MAP);
+    for(var ri=0;ri<allRows.length;ri++){
+      var row=allRows[ri];var label=(row[0]||'').trim();
+      if(!label)continue;
+      // Normalize em-dashes and special chars for matching
+      var normLabel=label.replace(/\u2014/g,'-').replace(/\u2013/g,'-').replace(/\s+/g,' ');
+      var key=fuzzyMatch(normLabel,METRIC_MAP);
       if(!key)continue;
       var vals=[];
-      for(var c=1;c<1+weekLabels.length;c++){
-        var raw=(row[c]||'').replace(/[$,%\s]/g,'');
-        var v=raw===''||raw==='-'?null:parseFloat(raw);
-        vals.push(isNaN(v)?null:v);
-      }
+      for(var c=1;c<1+weekLabels.length;c++){vals.push(pv(row[c]||''))}
       newWeekly[key]=vals;
     }
-    // Only update if we got meaningful data
+    console.log('CSV: Mapped '+Object.keys(newWeekly).length+' metrics');
+    // Check for revenue
     var hasData=false;
-    if(newWeekly.net_revenue){for(var i=0;i<newWeekly.net_revenue.length;i++){if(newWeekly.net_revenue[i]>0)hasData=true}}
-    if(!hasData){console.warn('CSV: no revenue data found');return}
-    // Merge into D
+    if(newWeekly.net_revenue){for(var i=0;i<newWeekly.net_revenue.length;i++){if(newWeekly.net_revenue[i]>0){hasData=true;break}}}
+    if(!hasData){console.warn('CSV: no revenue data found in mapped metrics');
+      console.log('CSV: Available keys='+Object.keys(newWeekly).join(','));
+      return}
+    // Merge
     D.weeks=newWeeks;
     for(var k in newWeekly){D.weekly[k]=newWeekly[k]}
-    // Recompute monthly rollup from weekly data
     recomputeMonthly();
-    console.log('CSV loaded: '+weekLabels.length+' weeks, '+Object.keys(newWeekly).length+' metrics');
+    var activeW=0;for(var i=0;i<newWeeks.length;i++){if(newWeekly.net_revenue&&newWeekly.net_revenue[i]>0)activeW++}
+    console.log('CSV loaded: '+activeW+' active weeks, '+Object.keys(newWeekly).length+' metrics');
+    // Update live indicator
     var dot=document.getElementById('live-dot');
     var stat=document.getElementById('live-status');
     var tsEl=document.getElementById('live-ts');
     if(dot)dot.className='live-dot on';
     if(stat){stat.textContent='LIVE';stat.style.color='#00e676'}
     if(tsEl)tsEl.textContent=new Date().toLocaleTimeString();
+    // Repopulate week dropdown
+    var fw2=document.getElementById('fw');
+    fw2.innerHTML='';
+    var ixNew=aW();
+    ixNew.slice().reverse().forEach(function(i){var o=document.createElement('option');o.value=i;o.textContent=D.weeks[i].label+' ('+D.weeks[i].month+')';fw2.appendChild(o)});
     render();
   }).catch(function(err){
     console.warn('CSV load failed:',err.message);
@@ -511,46 +539,6 @@ function loadCSV(){
     if(stat){stat.textContent='OFFLINE';stat.style.color='#ff1744'}
     if(tsEl)tsEl.textContent=err.message;
   });
-}
-
-function recomputeMonthly(){
-  var moMap={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
-  var w=D.weekly;var weeks=D.weeks;
-  // Sum-based monthly metrics
-  var sumKeys=['net_revenue','leads','jobs_booked','booked_revenue','jobs_completed','completed_rev',
-    'ad_spend','conversions','mover_hours','inbound_calls','outbound_calls','sessions','organic_views',
-    'reviews_new','google_leads','google_jobs','google_rev','google_spend',
-    'dm_leads','dm_jobs','dm_rev','dm_spend','snow_leads','snow_jobs','snow_rev','snow_spend',
-    'aff_leads','aff_jobs','aff_rev','aff_spend','org_leads','org_jobs','org_rev',
-    'total_mktg_leads','total_mktg_jobs','total_mktg_rev','paid_spend','total_spend','paid_rev'];
-  var mrKeyMap={'net_revenue':'7','leads':'25','jobs_booked':'27','booked_revenue':'29',
-    'jobs_completed':'35','completed_rev':'37','ad_spend':'54','conversions':'56',
-    'mover_hours':'107','inbound_calls':'42','outbound_calls':'44','sessions':'49','organic_views':'51',
-    'google_leads':'69','google_rev':'71','google_spend':'72',
-    'dm_leads':'77','dm_rev':'79','dm_spend':'80',
-    'snow_leads':'81','snow_rev':'83','snow_spend':'84',
-    'aff_leads':'85','aff_rev':'87','aff_spend':'88',
-    'org_leads':'89','org_rev':'91',
-    'total_mktg_leads':'94','total_mktg_rev':'96',
-    'paid_spend':'97','total_spend':'99','paid_rev':'100'};
-  for(var sk=0;sk<sumKeys.length;sk++){
-    var key=sumKeys[sk];var mrKey=mrKeyMap[key];
-    if(!mrKey||!w[key])continue;
-    var monthly=[0,0,0,0,0,0,0,0,0,0,0,0,0];
-    for(var i=0;i<weeks.length;i++){
-      var mo=weeks[i].month?weeks[i].month.toUpperCase().substring(0,3):'';
-      var mi=moMap[mo];if(mi==null)continue;
-      monthly[mi]+=n(w[key][i]);
-    }
-    monthly[12]=0;for(var m=0;m<12;m++)monthly[12]+=monthly[m];
-    if(D.monthly_rollup[mrKey])D.monthly_rollup[mrKey].values=monthly;
-  }
-  // Derived: Booking %
-  if(D.monthly_rollup['31']){var bp=[];var la=getMR('25'),ja=getMR('27');for(var m=0;m<13;m++)bp.push(n(la[m])>0?n(ja[m])/n(la[m]):null);D.monthly_rollup['31'].values=bp}
-  // RPMH
-  if(D.monthly_rollup['108']){var rp=[];var ra=getMR('7'),ha=getMR('107');for(var m=0;m<13;m++)rp.push(n(ha[m])>0?n(ra[m])/n(ha[m]):null);D.monthly_rollup['108'].values=rp}
-  // Cost per conversion
-  if(D.monthly_rollup['58']){var cp=[];var sa=getMR('54'),ca=getMR('56');for(var m=0;m<13;m++)cp.push(n(ca[m])>0?n(sa[m])/n(ca[m]):null);D.monthly_rollup['58'].values=cp}
 }
 
 // Initial load + auto-refresh
