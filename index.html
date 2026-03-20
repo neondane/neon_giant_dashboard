@@ -447,6 +447,41 @@ var METRIC_MAP=[
   ['Overall Marketing Efficiency','overall_mer'],['Overall Cost Per Lead','overall_cpl'],['Overall Cost Per Job','overall_cpj']
 ];
 
+
+function recomputeMonthly(){
+  var moMap={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+  var w=D.weekly;var weeks=D.weeks;
+  var sumKeys={net_revenue:'7',leads:'25',jobs_booked:'27',booked_revenue:'29',
+    jobs_completed:'35',completed_rev:'37',ad_spend:'54',conversions:'56',
+    mover_hours:'107',inbound_calls:'42',outbound_calls:'44',sessions:'49',organic_views:'51',
+    reviews_new:'62',
+    google_leads:'69',google_rev:'71',google_spend:'72',
+    dm_leads:'77',dm_rev:'79',dm_spend:'80',
+    snow_leads:'81',snow_rev:'83',snow_spend:'84',
+    aff_leads:'85',aff_rev:'87',aff_spend:'88',
+    org_leads:'89',org_rev:'91',
+    total_mktg_leads:'94',total_mktg_rev:'96',
+    paid_spend:'97',total_spend:'99',paid_rev:'100'};
+  for(var wk in sumKeys){
+    var mrKey=sumKeys[wk];if(!w[wk])continue;
+    var monthly=[0,0,0,0,0,0,0,0,0,0,0,0,0];
+    for(var i=0;i<weeks.length;i++){
+      var mo=(weeks[i].month||'').toUpperCase().substring(0,3);
+      var mi=moMap[mo];if(mi==null)continue;
+      monthly[mi]+=n(w[wk][i]);
+    }
+    for(var m=0;m<12;m++)monthly[12]+=monthly[m];
+    if(D.monthly_rollup[mrKey])D.monthly_rollup[mrKey].values=monthly;
+  }
+  // Derived: Booking %
+  if(D.monthly_rollup['31']){var bp=[];var la=getMR('25'),ja=getMR('27');for(var m=0;m<13;m++)bp.push(n(la[m])>0?n(ja[m])/n(la[m]):null);D.monthly_rollup['31'].values=bp}
+  // RPMH
+  if(D.monthly_rollup['108']){var rp=[];var ra=getMR('7'),ha=getMR('107');for(var m=0;m<13;m++)rp.push(n(ha[m])>0?n(ra[m])/n(ha[m]):null);D.monthly_rollup['108'].values=rp}
+  // Cost per conversion
+  if(D.monthly_rollup['58']){var cp=[];var sa=getMR('54'),ca=getMR('56');for(var m=0;m<13;m++)cp.push(n(ca[m])>0?n(sa[m])/n(ca[m]):null);D.monthly_rollup['58'].values=cp}
+  console.log('CSV: Monthly rollup recomputed');
+}
+
 function loadCSV(){
   console.log('CSV: Fetching...');
   fetch(CSV_URL).then(function(r){
