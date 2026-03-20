@@ -555,8 +555,9 @@ function loadCSV(){
       var normLabel=label.replace(/\u2014/g,'-').replace(/\u2013/g,'-').replace(/\s+/g,' ');
       var key=fuzzyMatch(normLabel,METRIC_MAP);
       if(!key)continue;
-      var vals=[];
-      for(var c=1;c<1+weekLabels.length;c++){vals.push(pv(row[c]||''))}
+      var vals=[];var hasAny=false;
+      for(var c=1;c<1+weekLabels.length;c++){var cv=pv(row[c]||'');vals.push(cv);if(cv!=null)hasAny=true}
+      if(!hasAny)continue;
       newWeekly[key]=vals;
     }
     console.log('CSV: Mapped '+Object.keys(newWeekly).length+' metrics');
