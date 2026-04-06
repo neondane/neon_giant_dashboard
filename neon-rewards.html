@@ -140,15 +140,29 @@ async function fetchSheet() {
   try {
     const res = await fetch(SHEET_URL + '&t=' + Date.now());
     const text = await res.text();
-    const lines = text.trim().split('\n').slice(4); // skip header rows
+    const lines = text.trim().split('\n');
     const crew = lines
       .map(line => {
-        const cols = line.split(',');
-        return { name: cols[0]?.trim(), pts: parseInt(cols[1]) || 0 };
+        const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+        const name = cols[0];
+        const pts = parseInt(cols[1]);
+        return { name, pts: isNaN(pts) ? 0 : pts };
       })
-      .filter(m => m.name && m.name.length > 0);
-    if (crew.length > 0) renderBars(crew);
-    document.getElementById('liveStatus').textContent = 'Live';
+      .filter(m => {
+        // Only keep rows where the name looks like a real person (First Last format)
+        // and the second column is a number
+        return m.name &&
+               m.name.includes(' ') &&
+               !isNaN(parseInt(m.pts.toString())) &&
+               !/employee|neon giant|auto|keep|do not|points/i.test(m.name);
+      });
+    if (crew.length > 0) {
+      renderBars(crew);
+      document.getElementById('liveStatus').textContent = 'Live';
+    } else {
+      renderBars(FALLBACK);
+      document.getElementById('liveStatus').textContent = 'Live';
+    }
   } catch(e) {
     renderBars(FALLBACK);
     document.getElementById('liveStatus').textContent = 'Offline';
