@@ -56,6 +56,7 @@ html,body{width:100%;height:100%;background:#0a0a0a;overflow:hidden;}
       <div class="topright">
         <div class="live-pill"><div class="live-dot"></div><div class="live-txt" id="liveStatus">Live</div></div>
         <div class="career-txt">Career Points &bull; All Time</div>
+        <div class="career-txt" id="lastUpdated" style="font-size:11px;opacity:0.6;"></div>
       </div>
     </div>
     <div class="slabel">Crew Leaderboard &mdash; Career Points</div>
@@ -77,17 +78,8 @@ const BLUE='#22aee4', PINK='#e33b93';
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9n03sC1lywlMnnA4QNJLOSOlZNivaxQiloD6-TKzm7QW578GP47zwlmMUkYuHXA/pub?gid=1554811516&single=true&output=csv';
 // ─────────────────────────────────────────────────────────────
 
-// Fallback data — used until sheet is connected
-const FALLBACK = [
-  {name:'Michael Hanewacker',pts:1000},
-  {name:'Carlos Sianez',     pts:500},
-  {name:'Charles Whitmore',  pts:500},
-  {name:'Ryan Chronister',   pts:500},
-  {name:'Samuel Jester',     pts:500},
-  {name:'Tyler Leverette',   pts:500},
-  {name:'William Pittman',   pts:500},
-  {name:'Marshall Pettibon', pts:0},
-];
+// No hardcoded fallback — sheet is the only source of truth
+const FALLBACK = [];
 
 const TIERS=[
   {pts:500,  label:'Tier 1'},
@@ -118,6 +110,10 @@ document.getElementById('tgrid').innerHTML = REWARDS.map(t=>
 ).join('');
 
 function renderBars(crew) {
+  if (!crew || crew.length === 0) {
+    document.getElementById('bars').innerHTML = '<div style="color:#444;font-family:Arial,sans-serif;font-size:14px;padding:20px;">Loading crew data...</div>';
+    return;
+  }
   const sorted = [...crew].sort((a,b)=>b.pts-a.pts);
   document.getElementById('bars').innerHTML = sorted.map((m,i)=>{
     const pct=Math.min((m.pts/10000)*100,100).toFixed(1);
@@ -140,28 +136,22 @@ async function fetchSheet() {
   try {
     const res = await fetch(SHEET_URL + '&t=' + Date.now());
     const text = await res.text();
-    const lines = text.trim().split('\n');
+    const lines = text.trim().split('\n').slice(4);
     const crew = lines
       .map(line => {
         const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
-        const name = cols[0];
-        const pts = parseInt(cols[1]);
-        return { name, pts: isNaN(pts) ? 0 : pts };
+        return { name: cols[0], pts: parseInt(cols[1]) || 0 };
       })
-      .filter(m => {
-        // Only keep rows where the name looks like a real person (First Last format)
-        // and the second column is a number
-        return m.name &&
-               m.name.includes(' ') &&
-               !isNaN(parseInt(m.pts.toString())) &&
-               !/employee|neon giant|auto|keep|do not|points/i.test(m.name);
-      });
+      .filter(m => m.name && m.name.length > 2);
     if (crew.length > 0) {
       renderBars(crew);
       document.getElementById('liveStatus').textContent = 'Live';
+      const now = new Date();
+      document.getElementById('lastUpdated').textContent =
+        'Updated ' + now.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
+        ' at ' + now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     } else {
       renderBars(FALLBACK);
-      document.getElementById('liveStatus').textContent = 'Live';
     }
   } catch(e) {
     renderBars(FALLBACK);
