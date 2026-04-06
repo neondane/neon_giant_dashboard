@@ -75,7 +75,8 @@ const BLUE='#22aee4', PINK='#e33b93';
 // Step 2: File → Share → Publish to web
 // Step 3: Choose "Totals" tab → "Comma-separated values (.csv)" → Publish
 // Step 4: Copy the URL and paste it below replacing the placeholder
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9n03sC1lywlMnnA4QNJLOSOlZNivaxQiloD6-TKzm7QW578GP47zwlmMUkYuHXA/pub?gid=1554811516&single=true&output=csv';
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS9n03sC1lywlMnnA4QNJLOSOlZNivaxQiloD6-TKzm7QW578GP47zwlmMUkYuHXA/pub?gid=1554811516&single=true&output=csv';
+const SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent(SHEET_CSV);
 // ─────────────────────────────────────────────────────────────
 
 // No hardcoded fallback — sheet is the only source of truth
@@ -134,15 +135,15 @@ async function fetchSheet() {
     return;
   }
   try {
-    const res = await fetch(SHEET_URL + '&t=' + Date.now());
+    const res = await fetch(SHEET_URL);
     const text = await res.text();
-    const lines = text.trim().split('\n').slice(4);
+    const lines = text.trim().split('\n');
     const crew = lines
       .map(line => {
         const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
-        return { name: cols[0], pts: parseInt(cols[1]) || 0 };
+        return { name: cols[0], pts: parseInt(cols[1]) };
       })
-      .filter(m => m.name && m.name.length > 2);
+      .filter(m => m.name && m.name.length > 2 && !isNaN(m.pts));
     if (crew.length > 0) {
       renderBars(crew);
       document.getElementById('liveStatus').textContent = 'Live';
@@ -150,11 +151,8 @@ async function fetchSheet() {
       document.getElementById('lastUpdated').textContent =
         'Updated ' + now.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
         ' at ' + now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-    } else {
-      renderBars(FALLBACK);
     }
   } catch(e) {
-    renderBars(FALLBACK);
     document.getElementById('liveStatus').textContent = 'Offline';
   }
 }
