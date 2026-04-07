@@ -54,6 +54,26 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
 .yi{text-align:center;padding:10px 20px;background:var(--bg);border-radius:8px}
 .yn{font-size:18px;font-weight:800;font-family:'Orbitron',sans-serif;color:var(--pu)}
 .yl{font-size:11px;color:#666;margin-top:2px}
+/* Log table */
+.log-wrap{max-width:900px}
+.log-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.log-stats{display:flex;gap:20px}
+.log-stat{text-align:center}
+.log-stat-val{font-size:20px;font-weight:800;font-family:'Orbitron',sans-serif}
+.log-stat-lbl{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
+.log-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.log-filters select{padding:6px 10px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;color:#ccc;font-size:11px;outline:none;font-family:'Inter',sans-serif}
+.log-tbl{width:100%;border-collapse:collapse}
+.log-tbl th{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1.5px;text-align:left;padding:8px 10px;border-bottom:2px solid var(--bd);font-weight:600}
+.log-tbl td{font-size:12px;padding:10px;border-bottom:1px solid var(--bd);color:#bbb}
+.log-tbl tr:hover td{background:rgba(255,255,255,.02)}
+.log-add{color:var(--bl);font-weight:700;font-family:monospace}
+.log-red{color:var(--pk);font-weight:700;font-family:monospace}
+.log-win{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);color:var(--gd)}
+.log-empty{text-align:center;padding:40px;color:#444;font-size:13px}
+.exp-btn{padding:6px 14px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;border:1px solid var(--bd);color:#666;text-transform:uppercase;letter-spacing:1.5px;font-family:'Inter',sans-serif}
+.exp-btn:hover{border-color:var(--bl);color:var(--bl)}
+/* Modal */
 .mb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999}
 .mx{background:var(--cd);border-radius:12px;padding:24px;width:90%;max-width:380px;border:1px solid var(--bd)}
 .mx h3{font-size:16px;font-weight:700;color:#eee;margin-bottom:4px}
@@ -64,8 +84,8 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
 .sv{flex:1;padding:9px 0;background:var(--bl);border:none;border-radius:6px;color:#fff;font-weight:700;font-size:12px;cursor:pointer}
 .cn{flex:1;padding:9px 0;background:transparent;border:1px solid var(--bd);border-radius:6px;color:#666;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
 .hd{display:none}
-@media(max-width:900px){.tg{grid-template-columns:repeat(3,1fr)}.rg{grid-template-columns:repeat(2,1fr)}.qg{grid-template-columns:1fr}}
-@media(max-width:600px){.w{padding:16px}.br span{font-size:24px}.tg{grid-template-columns:repeat(2,1fr)}.rg,.eg{grid-template-columns:1fr}.ec.f{grid-column:span 1}.qg{grid-template-columns:1fr}#sq{display:none}}
+@media(max-width:900px){.tg{grid-template-columns:repeat(3,1fr)}.rg{grid-template-columns:repeat(2,1fr)}.qg{grid-template-columns:1fr}.log-stats{gap:12px}}
+@media(max-width:600px){.w{padding:16px}.br span{font-size:24px}.tg{grid-template-columns:repeat(2,1fr)}.rg,.eg{grid-template-columns:1fr}.ec.f{grid-column:span 1}.qg{grid-template-columns:1fr}#sq{display:none}.log-tbl th:nth-child(4),.log-tbl td:nth-child(4){display:none}}
 </style>
 </head>
 <body>
@@ -173,7 +193,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
       <div class="lv"><div class="ld"></div><span>LIVE</span></div>
     </div>
   </div>
-  <div class="nv">
+  <div class="nv" id="navBar">
     <button class="on" onclick="tab('leaderboard',this)">Leaderboard</button>
     <button onclick="tab('rewards',this)">Neon Rewards</button>
     <button onclick="tab('earn',this)">How to Earn</button>
@@ -224,30 +244,67 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
       </div>
     </div>
   </div>
+
+  <!-- Points Log (admin only) -->
+  <div id="t-log" class="hd">
+    <div class="log-wrap">
+      <div class="log-header">
+        <div>
+          <div class="st" style="margin-bottom:4px">Points Log</div>
+          <div style="font-size:12px;color:#555">Every transaction, newest first</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="exp-btn" onclick="exportLog()">Export CSV</button>
+        </div>
+      </div>
+      <div class="log-stats" id="logStats"></div>
+      <div class="log-filters">
+        <select id="logFilter" onchange="renLog()">
+          <option value="all">All Crew</option>
+        </select>
+        <select id="logType" onchange="renLog()">
+          <option value="all">All Types</option>
+          <option value="add">Points Added</option>
+          <option value="redeem">Redeemed</option>
+          <option value="win">Quarterly Win</option>
+        </select>
+      </div>
+      <table class="log-tbl">
+        <thead><tr><th>Date</th><th>Crew Member</th><th>Type</th><th>Amount</th><th>Reason</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
+<!-- Edit Modal -->
 <div class="mb hd" id="modal" onclick="closeM()">
   <div class="mx" onclick="event.stopPropagation()">
     <h3 id="mN"></h3><div class="su" id="mS"></div>
     <label style="color:var(--bl)">Add Points</label><input id="mA" placeholder="e.g. 500">
     <label style="color:#666">Reason</label><input id="mR" placeholder="e.g. Q2 Best Brighten Moment">
     <label style="color:var(--pk)">Redeem Points</label><input id="mP" placeholder="e.g. 1500">
+    <label style="color:#666">Redemption Note</label><input id="mRN" placeholder="e.g. Redeemed YETI Rambler">
     <label style="color:var(--gd)">Add Quarterly Win</label><select id="mW"><option value="">None</option></select>
     <div class="mb2"><button class="sv" onclick="doSave()">SAVE</button><button class="cn" onclick="closeM()">Cancel</button></div>
   </div>
 </div>
 
+<!-- PIN Modal -->
 <div class="mb hd" id="pinModal">
   <div class="mx" onclick="event.stopPropagation()">
     <h3>Admin Login</h3><div class="su">Enter your PIN to edit crew points</div>
     <label style="color:var(--bl)">PIN</label><input id="pinIn" type="password" placeholder="Enter PIN">
     <div id="pinErr" style="color:var(--pk);font-size:11px;margin-bottom:8px"></div>
-    <div class="mb2"><button class="sv" onclick="checkPin()">LOGIN</button><button class="cn" onclick="closePinM()">Cancel</button></div>
+    <div class="mb2"><button class="sv" onclick="checkPin()">LOGIN</button><button class="cn" onclick="closePM()">Cancel</button></div>
   </div>
 </div>
 
 <script>
-const PIN="1234";
+// ═══ CHANGE YOUR PIN HERE ═══
+const PIN = "1234";
+// ═════════════════════════════
+
 const TI=[
   {t:1,p:500,l:"TIER 1",c:"#22aee4",r:["Neon Giant Nike hat","Backspins Golf Simulator + drink","Custom branded merch"]},
   {t:2,p:1500,l:"TIER 2",c:"#e33b93",r:["Max Dale's dinner for two","Two rounds — Avalon Golf","Whale watching — Anacortes"]},
@@ -275,35 +332,129 @@ const DC=[
   {id:"7",nm:"Tyler Leverette",rl:"Crew Foreman",tp:0,rp:0,qw:[]},
   {id:"8",nm:"William Pittman",rl:"Crew Member",tp:0,rp:0,qw:[]}
 ];
+
 let crew=DC.map(c=>({...c,qw:[...c.qw]}));
-let adm=false,eId=null;const K="ng-v3";
-function ld(){try{const d=localStorage.getItem(K);if(d)crew=JSON.parse(d);}catch(e){}}
-function sv(){try{localStorage.setItem(K,JSON.stringify(crew));}catch(e){}}
+let log=[];
+let adm=false,eId=null;
+const CK="ng-v4",LK="ng-log-v1";
+
+function ld(){
+  try{const d=localStorage.getItem(CK);if(d)crew=JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem(LK);if(d)log=JSON.parse(d);}catch(e){}
+}
+function sv(){try{localStorage.setItem(CK,JSON.stringify(crew));}catch(e){}}
+function svLog(){try{localStorage.setItem(LK,JSON.stringify(log));}catch(e){}}
 function pt(m){return m.tp-m.rp}
 function gt(p){let c=null;for(const t of TI)if(p>=t.p)c=t;return c;}
 function gn(p){for(const t of TI)if(p<t.p)return t;return null;}
+function fmtDate(d){const o=new Date(d);return o.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+o.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
+
+function addLog(memberId,type,amount,reason){
+  const m=crew.find(c=>c.id===memberId);
+  log.unshift({date:new Date().toISOString(),memberId:memberId,name:m?m.nm:'Unknown',type:type,amount:amount,reason:reason||''});
+  svLog();
+}
 
 function tryAdmin(){
-  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";ren();return;}
+  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";updateNav();ren();return;}
   document.getElementById("pinModal").classList.remove("hd");document.getElementById("pinIn").value="";document.getElementById("pinErr").textContent="";
   setTimeout(()=>document.getElementById("pinIn").focus(),100);
 }
 function checkPin(){
-  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("pinModal").classList.add("hd");ren();}
+  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
   else{document.getElementById("pinErr").textContent="Wrong PIN. Try again.";}
 }
-function closePinM(){document.getElementById("pinModal").classList.add("hd");}
+function closePM(){document.getElementById("pinModal").classList.add("hd");}
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&!document.getElementById("pinModal").classList.contains("hd"))checkPin();});
 
-function tab(id,btn){document.querySelectorAll('[id^="t-"]').forEach(e=>{if(e.id.startsWith("t-"))e.classList.add("hd")});document.getElementById("t-"+id).classList.remove("hd");document.querySelectorAll(".nv button").forEach(b=>b.classList.remove("on"));btn.classList.add("on");document.getElementById("sq").style.opacity=id==="leaderboard"?".08":"0";}
+function updateNav(){
+  const nav=document.getElementById("navBar");
+  // Remove existing log button if any
+  const existing=document.getElementById("logNavBtn");
+  if(existing)existing.remove();
+  if(adm){
+    const btn=document.createElement("button");
+    btn.id="logNavBtn";
+    btn.textContent="Points Log";
+    btn.onclick=function(){tab('log',this);};
+    nav.appendChild(btn);
+  } else {
+    // If currently on log tab, switch back to leaderboard
+    if(!document.getElementById("t-log").classList.contains("hd")){
+      document.getElementById("t-log").classList.add("hd");
+      document.getElementById("t-leaderboard").classList.remove("hd");
+      document.querySelectorAll(".nv button").forEach(b=>b.classList.remove("on"));
+      document.querySelector(".nv button").classList.add("on");
+    }
+  }
+}
+
+function tab(id,btn){
+  document.querySelectorAll('[id^="t-"]').forEach(e=>{if(e.id.startsWith("t-"))e.classList.add("hd")});
+  document.getElementById("t-"+id).classList.remove("hd");
+  document.querySelectorAll(".nv button").forEach(b=>b.classList.remove("on"));
+  btn.classList.add("on");
+  document.getElementById("sq").style.opacity=id==="leaderboard"?".08":"0";
+  if(id==="log")renLog();
+}
 
 function ren(){
   const s=[...crew].sort((a,b)=>pt(b)-pt(a));
-  const el=document.getElementById("bd2");
-  el.innerHTML=s.map((m,i)=>{const a=pt(m),t=gt(a),n=gn(a),tc=t?t.c:"#22aee4",gd=i<3?"var(--gd)":"#555";
+  document.getElementById("bd2").innerHTML=s.map((m,i)=>{
+    const a=pt(m),t=gt(a),n=gn(a),tc=t?t.c:"#22aee4",gd=i<3?"var(--gd)":"#555";
     const pct=n?(t?((a-t.p)/(n.p-t.p)*100):(a/n.p*100)):100;
     return'<div class="row"><div class="rk" style="color:'+gd+'">'+(i+1)+'</div><div class="inf"><div class="nm">'+m.nm+'</div><div class="rl">'+m.rl+'</div></div><div style="text-align:right;min-width:70px"><span class="pv" style="color:'+tc+'">'+a.toLocaleString()+'</span><span class="pl">pts</span></div>'+(n?'<div class="bw"><div class="bb"><div class="bf" style="width:'+pct+'%;background:'+n.c+'"></div></div><div class="bt">'+(n.p-a).toLocaleString()+' to T'+n.t+'</div></div>':'')+(adm?'<button class="eb" onclick="openM(\''+m.id+'\')">Edit</button>':'')+'</div>';
   }).join("");
+}
+
+function renLog(){
+  // Update filter dropdown
+  const sel=document.getElementById("logFilter");
+  const curVal=sel.value;
+  sel.innerHTML='<option value="all">All Crew</option>'+crew.map(m=>'<option value="'+m.id+'">'+m.nm+'</option>').join("");
+  sel.value=curVal;
+
+  const filterMember=document.getElementById("logFilter").value;
+  const filterType=document.getElementById("logType").value;
+
+  let filtered=log;
+  if(filterMember!=="all")filtered=filtered.filter(e=>e.memberId===filterMember);
+  if(filterType!=="all")filtered=filtered.filter(e=>e.type===filterType);
+
+  // Stats
+  const totalAdded=log.reduce((s,e)=>s+(e.type==="add"?e.amount:0),0);
+  const totalRedeemed=log.reduce((s,e)=>s+(e.type==="redeem"?e.amount:0),0);
+  const totalEntries=log.length;
+  document.getElementById("logStats").innerHTML=
+    '<div class="log-stat"><div class="log-stat-val" style="color:var(--bl)">'+totalEntries+'</div><div class="log-stat-lbl">Entries</div></div>'+
+    '<div class="log-stat"><div class="log-stat-val" style="color:#39FF14">+'+totalAdded.toLocaleString()+'</div><div class="log-stat-lbl">Total Added</div></div>'+
+    '<div class="log-stat"><div class="log-stat-val" style="color:var(--pk)">-'+totalRedeemed.toLocaleString()+'</div><div class="log-stat-lbl">Total Redeemed</div></div>';
+
+  if(filtered.length===0){
+    document.getElementById("logBody").innerHTML='<tr><td colspan="5" class="log-empty">No entries yet. Points will be logged here as you add them.</td></tr>';
+    return;
+  }
+
+  document.getElementById("logBody").innerHTML=filtered.map(e=>{
+    let typeLabel,amtClass,amtStr;
+    if(e.type==="add"){typeLabel='<span style="color:var(--bl)">Added</span>';amtClass="log-add";amtStr="+"+e.amount.toLocaleString();}
+    else if(e.type==="redeem"){typeLabel='<span style="color:var(--pk)">Redeemed</span>';amtClass="log-red";amtStr="-"+e.amount.toLocaleString();}
+    else{typeLabel='<span class="log-win">'+e.reason+'</span>';amtClass="";amtStr="—";}
+    return'<tr><td style="color:#777;font-size:11px;white-space:nowrap">'+fmtDate(e.date)+'</td><td style="color:#ddd;font-weight:600">'+e.name+'</td><td>'+typeLabel+'</td><td class="'+amtClass+'">'+amtStr+'</td><td style="color:#888">'+((e.type==="win"?"":e.reason)||'—')+'</td></tr>';
+  }).join("");
+}
+
+function exportLog(){
+  if(log.length===0){alert("No log entries to export.");return;}
+  let csv="Date,Crew Member,Type,Amount,Reason\n";
+  log.forEach(e=>{
+    csv+='"'+fmtDate(e.date)+'","'+e.name+'","'+e.type+'","'+(e.type==="win"?"":e.amount)+'","'+(e.reason||"").replace(/"/g,'""')+'"\n';
+  });
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="NeonGiant_PointsLog_"+new Date().toISOString().slice(0,10)+".csv";
+  a.click();URL.revokeObjectURL(url);
 }
 
 function renT(){document.getElementById("tg2").innerHTML=TI.map(t=>'<div class="tc" style="border-left-color:'+t.c+'"><div class="tp" style="color:'+t.c+'">'+t.p.toLocaleString()+'</div><div class="tl" style="color:'+t.c+'">'+t.l+'</div>'+t.r.map(r=>'<div class="ti">'+r+'</div>').join("")+'</div>').join("");}
@@ -313,9 +464,32 @@ function renE(){
   document.getElementById("yr2").innerHTML=YS.map(([y,p])=>'<div class="yi"><div class="yn">+'+p.toLocaleString()+'</div><div class="yl">'+y+' year'+(y>1?'s':'')+'</div></div>').join("")+'<div class="yi"><div class="yn">+1,000</div><div class="yl">every yr after 5</div></div>';
 }
 
-function openM(id){eId=id;const m=crew.find(c=>c.id===id);document.getElementById("mN").textContent=m.nm;document.getElementById("mS").textContent="Available: "+pt(m).toLocaleString()+" pts";document.getElementById("mA").value="";document.getElementById("mR").value="";document.getElementById("mP").value="";document.getElementById("mW").innerHTML='<option value="">None</option>'+QC.map(c=>'<option value="'+c.id+'">'+c.icon+' '+c.label+'</option>').join("");document.getElementById("modal").classList.remove("hd");}
+function openM(id){eId=id;const m=crew.find(c=>c.id===id);document.getElementById("mN").textContent=m.nm;document.getElementById("mS").textContent="Available: "+pt(m).toLocaleString()+" pts";document.getElementById("mA").value="";document.getElementById("mR").value="";document.getElementById("mP").value="";document.getElementById("mRN").value="";document.getElementById("mW").innerHTML='<option value="">None</option>'+QC.map(c=>'<option value="'+c.id+'">'+c.icon+' '+c.label+'</option>').join("");document.getElementById("modal").classList.remove("hd");}
 function closeM(){document.getElementById("modal").classList.add("hd");eId=null;}
-function doSave(){const a=parseInt(document.getElementById("mA").value)||0,r=parseInt(document.getElementById("mP").value)||0,w=document.getElementById("mW").value;crew=crew.map(m=>{if(m.id!==eId)return m;const u={...m,tp:m.tp+a,rp:m.rp+r,qw:[...m.qw]};if(w&&!u.qw.includes(w))u.qw.push(w);return u;});sv();ren();closeM();}
+
+function doSave(){
+  const addAmt=parseInt(document.getElementById("mA").value)||0;
+  const redAmt=parseInt(document.getElementById("mP").value)||0;
+  const addReason=document.getElementById("mR").value.trim();
+  const redReason=document.getElementById("mRN").value.trim();
+  const win=document.getElementById("mW").value;
+
+  // Log each action separately
+  if(addAmt>0) addLog(eId,"add",addAmt,addReason);
+  if(redAmt>0) addLog(eId,"redeem",redAmt,redReason);
+  if(win){
+    const wCat=QC.find(c=>c.id===win);
+    addLog(eId,"win",wCat?wCat.pts:0,wCat?wCat.icon+" "+wCat.label:"Quarterly Win");
+  }
+
+  crew=crew.map(m=>{
+    if(m.id!==eId)return m;
+    const u={...m,tp:m.tp+addAmt,rp:m.rp+redAmt,qw:[...m.qw]};
+    if(win&&!u.qw.includes(win))u.qw.push(win);
+    return u;
+  });
+  sv();ren();closeM();
+}
 
 ld();ren();renT();renR();renE();
 </script>
