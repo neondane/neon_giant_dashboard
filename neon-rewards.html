@@ -221,25 +221,27 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
     <div class="st" style="margin-bottom:6px">How You Earn</div>
     <div style="font-size:13px;color:#666;margin-bottom:24px">Points are the currency. Stack 'em, redeem 'em.</div>
     <div class="eg">
-      <div class="ec" style="border-top-color:var(--bl)">
-        <div style="font-size:11px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Every Job</div>
-        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">Brighten Your Day submission</span><span style="font-weight:700;color:var(--bl);font-family:monospace">+100</span></div>
-        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">5-star Google review (by name)</span><span style="font-weight:700;color:var(--bl);font-family:monospace">+150</span></div>
-        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">Customer tip-out to crew</span><span style="font-weight:700;color:var(--bl);font-family:monospace">+50</span></div>
-        <div class="er"><span style="color:#bbb">Zero damage on job</span><span style="font-weight:700;color:var(--bl);font-family:monospace">+50</span></div>
-      </div>
       <div class="ec" style="border-top-color:var(--gd)">
-        <div style="font-size:11px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Bonus Points</div>
-        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">Referral that books a job</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+200</span></div>
-        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">Saturday worked</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+75</span></div>
-        <div class="er"><span style="color:#bbb">Cover a shift last-minute</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+100</span></div>
+        <div style="font-size:11px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Bonus Points — Awarded by Dane or Jeff</div>
+        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">💪 Goes above and beyond on a tough job</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+100 to +250</span></div>
+        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">👥 Refers a hire who completes onboarding</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+500</span></div>
+        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">🔁 Customer requests you by name (repeat job)</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+150</span></div>
+        <div class="er" style="border-bottom:1px solid var(--bd)"><span style="color:#bbb">🛡️ Zero damage claims for the full quarter (team)</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+100</span></div>
+        <div class="er"><span style="color:#bbb">📹 Each Brighten Your Day video submitted</span><span style="font-weight:700;color:var(--gd);font-family:monospace">+20</span></div>
+      </div>
+      <div class="ec" style="border-top-color:var(--bl)">
+        <div style="font-size:11px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Parking Spot</div>
+        <div style="text-align:center;padding:12px 0">
+          <div style="font-size:24px;margin-bottom:6px">🅿️</div>
+          <div style="font-size:12px;color:#bbb">Most category wins that quarter earns the <strong style="color:#ddd">best spot by the door</strong> with your name on it for the entire next quarter.</div>
+        </div>
       </div>
       <div class="ec f" style="border-top-color:var(--pk)">
-        <div style="font-size:11px;font-weight:700;color:var(--pk);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Quarterly Competition</div>
+        <div style="font-size:11px;font-weight:700;color:var(--pk);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Quarterly Competition — 6 Category Winners</div>
         <div class="qg" id="qg2"></div>
       </div>
       <div class="ec f" style="border-top-color:var(--pu)">
-        <div style="font-size:11px;font-weight:700;color:var(--pu);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Years of Service Bonus</div>
+        <div style="font-size:11px;font-weight:700;color:var(--pu);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Years of Service — Awarded on Work Anniversary</div>
         <div class="yr" id="yr2"></div>
       </div>
     </div>
@@ -255,6 +257,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="exp-btn" onclick="exportLog()">Export CSV</button>
+          <button class="exp-btn" style="border-color:#FF444444;color:#FF4444" onclick="clearLog()">Clear All</button>
         </div>
       </div>
       <div class="log-stats" id="logStats"></div>
@@ -270,7 +273,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
         </select>
       </div>
       <table class="log-tbl">
-        <thead><tr><th>Date</th><th>Crew Member</th><th>Type</th><th>Amount</th><th>Reason</th></tr></thead>
+        <thead><tr><th>Date</th><th>Crew Member</th><th>Type</th><th>Amount</th><th>Reason</th><th style="width:40px"></th></tr></thead>
         <tbody id="logBody"></tbody>
       </table>
     </div>
@@ -311,15 +314,15 @@ const TI=[
   {t:3,p:2500,l:"TIER 3",c:"#d4a843",r:["Couples massage","Two Mariners tickets","Two Mt. Baker lift tickets"]},
   {t:4,p:5000,l:"TIER 4",c:"#FF8C00",r:["Two nights at Semiahmoo","Two Seahawks tickets","Concert tickets for two"]},
   {t:5,p:7500,l:"TIER 5",c:"#A855F7",r:["Hot air balloon — Snohomish","Seahawks marquee game","Semiahmoo Love by the Water"]},
-  {t:6,p:10000,l:"TIER 6 — THE LEGEND",c:"#FF4444",r:["Vegas trip for two","Seahawks game day","Chartered fishing — Puget Sound"]}
+  {t:6,p:10000,l:"TIER 6 — THE LEGEND",c:"#FF4444",r:["Vegas trip for two","Seahawks game day experience","Chartered fishing — Puget Sound","Your choice — sit down with Dane"]}
 ];
 const QC=[
-  {id:"brighten",label:"Best Brighten Your Day Moment",icon:"🏆",pts:1500},
-  {id:"submissions",label:"Most Submissions",icon:"📊",pts:750},
-  {id:"reviews",label:"Most Google Reviews",icon:"⭐",pts:750},
-  {id:"saturdays",label:"Most Saturdays Worked",icon:"💪",pts:500},
+  {id:"brighten",label:"Best Brighten Your Day Moment",icon:"🌟",pts:1000},
   {id:"teammate",label:"Best Teammate (Crew Vote)",icon:"🤝",pts:500},
-  {id:"attitude",label:"Best Attitude (Crew Vote)",icon:"🔥",pts:500}
+  {id:"improved",label:"Most Improved This Quarter",icon:"📈",pts:500},
+  {id:"submissions",label:"Most Brighten Your Day Submissions",icon:"📹",pts:1000},
+  {id:"reviews",label:"Most 5-Star Google Reviews",icon:"⭐",pts:1000},
+  {id:"saturdays",label:"Most Saturdays Worked",icon:"📅",pts:1000}
 ];
 const YS=[[1,500],[2,1000],[3,1500],[4,2000],[5,3000]];
 const DC=[
@@ -431,17 +434,49 @@ function renLog(){
     '<div class="log-stat"><div class="log-stat-val" style="color:var(--pk)">-'+totalRedeemed.toLocaleString()+'</div><div class="log-stat-lbl">Total Redeemed</div></div>';
 
   if(filtered.length===0){
-    document.getElementById("logBody").innerHTML='<tr><td colspan="5" class="log-empty">No entries yet. Points will be logged here as you add them.</td></tr>';
+    document.getElementById("logBody").innerHTML='<tr><td colspan="6" class="log-empty">No entries yet. Points will be logged here as you add them.</td></tr>';
     return;
   }
 
-  document.getElementById("logBody").innerHTML=filtered.map(e=>{
+  document.getElementById("logBody").innerHTML=filtered.map((e,i)=>{
+    // Find the real index in the full log array
+    const realIdx=log.indexOf(e);
     let typeLabel,amtClass,amtStr;
     if(e.type==="add"){typeLabel='<span style="color:var(--bl)">Added</span>';amtClass="log-add";amtStr="+"+e.amount.toLocaleString();}
     else if(e.type==="redeem"){typeLabel='<span style="color:var(--pk)">Redeemed</span>';amtClass="log-red";amtStr="-"+e.amount.toLocaleString();}
     else{typeLabel='<span class="log-win">'+e.reason+'</span>';amtClass="";amtStr="—";}
-    return'<tr><td style="color:#777;font-size:11px;white-space:nowrap">'+fmtDate(e.date)+'</td><td style="color:#ddd;font-weight:600">'+e.name+'</td><td>'+typeLabel+'</td><td class="'+amtClass+'">'+amtStr+'</td><td style="color:#888">'+((e.type==="win"?"":e.reason)||'—')+'</td></tr>';
+    return'<tr><td style="color:#777;font-size:11px;white-space:nowrap">'+fmtDate(e.date)+'</td><td style="color:#ddd;font-weight:600">'+e.name+'</td><td>'+typeLabel+'</td><td class="'+amtClass+'">'+amtStr+'</td><td style="color:#888">'+((e.type==="win"?"":e.reason)||'—')+'</td><td><button onclick="delLog('+realIdx+')" style="background:transparent;border:1px solid #FF444433;border-radius:4px;color:#FF4444;font-size:9px;padding:3px 6px;cursor:pointer;font-family:Inter,sans-serif" title="Delete and reverse points">Undo</button></td></tr>';
   }).join("");
+}
+
+function delLog(idx){
+  const entry=log[idx];
+  if(!entry)return;
+  if(!confirm('Delete this entry and reverse the points?\n\n'+entry.name+' — '+(entry.type==="add"?"+":entry.type==="redeem"?"-":"")+entry.amount+' pts'+(entry.reason?' ('+entry.reason+')':'')))return;
+
+  // Reverse the points on the crew member
+  const m=crew.find(c=>c.id===entry.memberId);
+  if(m){
+    if(entry.type==="add"){m.tp=Math.max(0,m.tp-entry.amount);}
+    else if(entry.type==="redeem"){m.rp=Math.max(0,m.rp-entry.amount);}
+    else if(entry.type==="win"){
+      m.tp=Math.max(0,m.tp-entry.amount);
+      // Remove the quarterly win category
+      const winId=QC.find(c=>entry.reason&&entry.reason.includes(c.label));
+      if(winId){m.qw=m.qw.filter(w=>w!==winId.id);}
+    }
+  }
+
+  // Remove the log entry
+  log.splice(idx,1);
+  sv();svLog();ren();renLog();
+}
+
+function clearLog(){
+  if(log.length===0)return;
+  if(!confirm('Clear ALL '+log.length+' log entries?\n\nThis will NOT change current point totals — it only clears the history. This cannot be undone.'))return;
+  log=[];
+  svLog();renLog();
 }
 
 function exportLog(){
