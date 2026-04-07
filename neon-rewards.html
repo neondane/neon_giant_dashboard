@@ -10,7 +10,7 @@
 :root{--pk:#e33b93;--bl:#22aee4;--bg:#1a1d23;--cd:#22252b;--bd:#2d3039;--gd:#d4a843;--or:#FF8C00;--pu:#A855F7;--rd:#FF4444}
 body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-serif;min-height:100vh;overflow-x:hidden}
 .w{max-width:1200px;margin:0 auto;padding:30px 40px;position:relative;z-index:1}
-#sq{position:fixed;right:-5%;top:0;width:55%;height:100%;opacity:.08;pointer-events:none;transition:opacity .3s}
+#sq{position:fixed;right:-5%;top:0;width:55%;height:100%;opacity:.18;pointer-events:none;transition:opacity .3s}
 .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .br{display:flex;align-items:baseline;gap:12px}
 .br span{font-size:38px;font-weight:900;letter-spacing:3px;font-family:'Orbitron',sans-serif}
@@ -394,7 +394,7 @@ function tab(id,btn){
   document.getElementById("t-"+id).classList.remove("hd");
   document.querySelectorAll(".nv button").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on");
-  document.getElementById("sq").style.opacity=id==="leaderboard"?".08":"0";
+  document.getElementById("sq").style.opacity=id==="leaderboard"?".18":"0";
   if(id==="log")renLog();
 }
 
@@ -474,20 +474,18 @@ function doSave(){
   const redReason=document.getElementById("mRN").value.trim();
   const win=document.getElementById("mW").value;
 
-  // Log each action separately
-  if(addAmt>0) addLog(eId,"add",addAmt,addReason);
-  if(redAmt>0) addLog(eId,"redeem",redAmt,redReason);
-  if(win){
+  // Find and update the crew member directly
+  const m=crew.find(c=>c.id===eId);
+  if(!m){closeM();return;}
+
+  if(addAmt>0){m.tp+=addAmt;addLog(eId,"add",addAmt,addReason);}
+  if(redAmt>0){m.rp+=redAmt;addLog(eId,"redeem",redAmt,redReason);}
+  if(win&&!m.qw.includes(win)){
     const wCat=QC.find(c=>c.id===win);
-    addLog(eId,"win",wCat?wCat.pts:0,wCat?wCat.icon+" "+wCat.label:"Quarterly Win");
+    m.qw.push(win);
+    if(wCat){m.tp+=wCat.pts;addLog(eId,"win",wCat.pts,wCat.icon+" "+wCat.label);}
   }
 
-  crew=crew.map(m=>{
-    if(m.id!==eId)return m;
-    const u={...m,tp:m.tp+addAmt,rp:m.rp+redAmt,qw:[...m.qw]};
-    if(win&&!u.qw.includes(win))u.qw.push(win);
-    return u;
-  });
   sv();ren();closeM();
 }
 
