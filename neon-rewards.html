@@ -190,6 +190,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
     </div>
     <div class="ctrl">
       <button class="abtn" id="aB" onclick="tryAdmin()">Admin</button>
+      <button class="abtn hd" id="saveBtn" onclick="saveFile()" style="border-color:var(--bd);color:#555">Saved ✓</button>
       <div class="lv"><div class="ld"></div><span>LIVE</span></div>
     </div>
   </div>
@@ -325,7 +326,13 @@ const QC=[
   {id:"saturdays",label:"Most Saturdays Worked",icon:"📅",pts:1000}
 ];
 const YS=[[1,500],[2,1000],[3,1500],[4,2000],[5,3000]];
-const DC=[
+
+// ═══════════════════════════════════════════════════════════
+// SAVED DATA — This is where your points live permanently.
+// Every time you save, this file re-downloads with updated data.
+// ═══════════════════════════════════════════════════════════
+/*--CREW-DATA-START--*/
+let SAVED_CREW=[
   {id:"1",nm:"Carlos Sianez",rl:"Crew Foreman",tp:0,rp:0,qw:[]},
   {id:"2",nm:"Charles Whitmore",rl:"Crew Foreman",tp:0,rp:0,qw:[]},
   {id:"3",nm:"Marshall Pettibon",rl:"Crew Foreman",tp:0,rp:0,qw:[]},
@@ -335,18 +342,16 @@ const DC=[
   {id:"7",nm:"Tyler Leverette",rl:"Crew Foreman",tp:0,rp:0,qw:[]},
   {id:"8",nm:"William Pittman",rl:"Crew Member",tp:0,rp:0,qw:[]}
 ];
+/*--CREW-DATA-END--*/
+/*--LOG-DATA-START--*/
+let SAVED_LOG=[];
+/*--LOG-DATA-END--*/
 
-let crew=DC.map(c=>({...c,qw:[...c.qw]}));
-let log=[];
+let crew=SAVED_CREW.map(c=>({...c,qw:[...c.qw]}));
+let log=[...SAVED_LOG.map(e=>({...e}))];
 let adm=false,eId=null;
-const CK="ng-v4",LK="ng-log-v1";
+let unsaved=false;
 
-function ld(){
-  try{const d=localStorage.getItem(CK);if(d)crew=JSON.parse(d);}catch(e){}
-  try{const d=localStorage.getItem(LK);if(d)log=JSON.parse(d);}catch(e){}
-}
-function sv(){try{localStorage.setItem(CK,JSON.stringify(crew));}catch(e){}}
-function svLog(){try{localStorage.setItem(LK,JSON.stringify(log));}catch(e){}}
 function pt(m){return m.tp-m.rp}
 function gt(p){let c=null;for(const t of TI)if(p>=t.p)c=t;return c;}
 function gn(p){for(const t of TI)if(p<t.p)return t;return null;}
@@ -355,16 +360,73 @@ function fmtDate(d){const o=new Date(d);return o.toLocaleDateString('en-US',{mon
 function addLog(memberId,type,amount,reason){
   const m=crew.find(c=>c.id===memberId);
   log.unshift({date:new Date().toISOString(),memberId:memberId,name:m?m.nm:'Unknown',type:type,amount:amount,reason:reason||''});
-  svLog();
 }
 
+// ═══ SELF-SAVING: rewrites this HTML file with current data ═══
+function saveFile(){
+  // Get the full HTML source
+  let html=document.documentElement.outerHTML;
+  html='<!DOCTYPE html>\n<html lang="en">'+html.slice(html.indexOf('<head'));
+
+  // Build new crew data string
+  const crewStr='let SAVED_CREW='+JSON.stringify(crew)+';';
+  const logStr='let SAVED_LOG='+JSON.stringify(log)+';';
+
+  // Replace the data blocks between markers
+  html=html.replace(
+    /\/\*--CREW-DATA-START--\*\/[\s\S]*?\/\*--CREW-DATA-END--\*\//,
+    '/*--CREW-DATA-START--*/\n'+crewStr+'\n/*--CREW-DATA-END--*/'
+  );
+  html=html.replace(
+    /\/\*--LOG-DATA-START--\*\/[\s\S]*?\/\*--LOG-DATA-END--\*\//,
+    '/*--LOG-DATA-START--*/\n'+logStr+'\n/*--LOG-DATA-END--*/'
+  );
+
+  // Download the updated file
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='NeonGiant_Leaderboard.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  unsaved=false;
+  updateSaveIndicator();
+}
+
+function markUnsaved(){
+  unsaved=true;
+  updateSaveIndicator();
+}
+
+function updateSaveIndicator(){
+  const el=document.getElementById('saveBtn');
+  if(!el)return;
+  if(unsaved){
+    el.style.borderColor='#39FF14';
+    el.style.color='#39FF14';
+    el.style.background='rgba(57,255,20,.1)';
+    el.textContent='💾 Save Changes';
+  } else {
+    el.style.borderColor='var(--bd)';
+    el.style.color='#555';
+    el.style.background='transparent';
+    el.textContent='Saved ✓';
+  }
+}
+
+// Warn before leaving with unsaved changes
+window.addEventListener('beforeunload',function(e){
+  if(unsaved){e.preventDefault();e.returnValue='';}
+});
+
 function tryAdmin(){
-  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";updateNav();ren();return;}
+  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";document.getElementById("saveBtn").classList.add("hd");updateNav();ren();return;}
   document.getElementById("pinModal").classList.remove("hd");document.getElementById("pinIn").value="";document.getElementById("pinErr").textContent="";
   setTimeout(()=>document.getElementById("pinIn").focus(),100);
 }
 function checkPin(){
-  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
+  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("saveBtn").classList.remove("hd");document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
   else{document.getElementById("pinErr").textContent="Wrong PIN. Try again.";}
 }
 function closePM(){document.getElementById("pinModal").classList.add("hd");}
@@ -469,14 +531,14 @@ function delLog(idx){
 
   // Remove the log entry
   log.splice(idx,1);
-  sv();svLog();ren();renLog();
+  markUnsaved();ren();renLog();
 }
 
 function clearLog(){
   if(log.length===0)return;
   if(!confirm('Clear ALL '+log.length+' log entries?\n\nThis will NOT change current point totals — it only clears the history. This cannot be undone.'))return;
   log=[];
-  svLog();renLog();
+  markUnsaved();renLog();
 }
 
 function exportLog(){
@@ -521,10 +583,10 @@ function doSave(){
     if(wCat){m.tp+=wCat.pts;addLog(eId,"win",wCat.pts,wCat.icon+" "+wCat.label);}
   }
 
-  sv();ren();closeM();
+  markUnsaved();ren();closeM();
 }
 
-ld();ren();renT();renR();renE();
+ren();renT();renR();renE();
 </script>
 </body>
 </html>
