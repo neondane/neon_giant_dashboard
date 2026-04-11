@@ -21,6 +21,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
 .lv{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--cd);border-radius:8px;border:1px solid var(--bd)}
 .ld{width:8px;height:8px;border-radius:50%;background:#39FF14;box-shadow:0 0 8px #39FF14;animation:pu 2s infinite}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes pulse-save{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 .lv span{font-size:12px;font-weight:700;color:#eee;letter-spacing:1px}
 .nv{display:flex;gap:0;margin:12px 0 24px;border-bottom:1px solid var(--bd)}
 .nv button{padding:10px 24px;border:none;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:#555;letter-spacing:1.5px;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Inter',sans-serif}
@@ -190,6 +191,7 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
     </div>
     <div class="ctrl">
       <button class="abtn" id="aB" onclick="tryAdmin()">Admin</button>
+      <button class="abtn" id="saveBtn" onclick="saveFile()" style="display:none;border-color:#39FF14;color:#39FF14;background:rgba(57,255,20,.1);font-weight:800">💾 SAVE</button>
       <div class="lv"><div class="ld"></div><span>LIVE</span></div>
     </div>
   </div>
@@ -396,12 +398,12 @@ function saveFile(){
 // Auto-save removes need for manual tracking;
 
 function tryAdmin(){
-  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";updateNav();ren();return;}
+  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";document.getElementById("saveBtn").style.display="none";updateNav();ren();return;}
   document.getElementById("pinModal").classList.remove("hd");document.getElementById("pinIn").value="";document.getElementById("pinErr").textContent="";
   setTimeout(()=>document.getElementById("pinIn").focus(),100);
 }
 function checkPin(){
-  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
+  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("saveBtn").style.display="inline-block";document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
   else{document.getElementById("pinErr").textContent="Wrong PIN. Try again.";}
 }
 function closePM(){document.getElementById("pinModal").classList.add("hd");}
@@ -506,14 +508,14 @@ function delLog(idx){
 
   // Remove the log entry
   log.splice(idx,1);
-  ren();renLog();saveFile();
+  ren();renLog();
 }
 
 function clearLog(){
   if(log.length===0)return;
   if(!confirm('Clear ALL '+log.length+' log entries?\n\nThis will NOT change current point totals — it only clears the history. This cannot be undone.'))return;
   log=[];
-  renLog();saveFile();
+  renLog();
 }
 
 function exportLog(){
@@ -558,7 +560,7 @@ function doSave(){
     if(wCat){m.tp+=wCat.pts;addLog(eId,"win",wCat.pts,wCat.icon+" "+wCat.label);}
   }
 
-  ren();closeM();saveFile();
+  ren();closeM();
 }
 
 ren();renT();renR();renE();
