@@ -190,7 +190,6 @@ body{background:var(--bg);color:#ccc;font-family:'Inter',-apple-system,sans-seri
     </div>
     <div class="ctrl">
       <button class="abtn" id="aB" onclick="tryAdmin()">Admin</button>
-      <button class="abtn hd" id="saveBtn" onclick="saveFile()" style="border-color:var(--bd);color:#555">Saved ✓</button>
       <div class="lv"><div class="ld"></div><span>LIVE</span></div>
     </div>
   </div>
@@ -394,39 +393,15 @@ function saveFile(){
   updateSaveIndicator();
 }
 
-function markUnsaved(){
-  unsaved=true;
-  updateSaveIndicator();
-}
-
-function updateSaveIndicator(){
-  const el=document.getElementById('saveBtn');
-  if(!el)return;
-  if(unsaved){
-    el.style.borderColor='#39FF14';
-    el.style.color='#39FF14';
-    el.style.background='rgba(57,255,20,.1)';
-    el.textContent='💾 Save Changes';
-  } else {
-    el.style.borderColor='var(--bd)';
-    el.style.color='#555';
-    el.style.background='transparent';
-    el.textContent='Saved ✓';
-  }
-}
-
-// Warn before leaving with unsaved changes
-window.addEventListener('beforeunload',function(e){
-  if(unsaved){e.preventDefault();e.returnValue='';}
-});
+// Auto-save removes need for manual tracking;
 
 function tryAdmin(){
-  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";document.getElementById("saveBtn").classList.add("hd");updateNav();ren();return;}
+  if(adm){adm=false;document.getElementById("aB").classList.remove("on");document.getElementById("aB").textContent="Admin";updateNav();ren();return;}
   document.getElementById("pinModal").classList.remove("hd");document.getElementById("pinIn").value="";document.getElementById("pinErr").textContent="";
   setTimeout(()=>document.getElementById("pinIn").focus(),100);
 }
 function checkPin(){
-  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("saveBtn").classList.remove("hd");document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
+  if(document.getElementById("pinIn").value===PIN){adm=true;document.getElementById("aB").classList.add("on");document.getElementById("aB").textContent="Admin ✓";document.getElementById("pinModal").classList.add("hd");updateNav();ren();renLog();}
   else{document.getElementById("pinErr").textContent="Wrong PIN. Try again.";}
 }
 function closePM(){document.getElementById("pinModal").classList.add("hd");}
@@ -531,14 +506,14 @@ function delLog(idx){
 
   // Remove the log entry
   log.splice(idx,1);
-  markUnsaved();ren();renLog();
+  ren();renLog();saveFile();
 }
 
 function clearLog(){
   if(log.length===0)return;
   if(!confirm('Clear ALL '+log.length+' log entries?\n\nThis will NOT change current point totals — it only clears the history. This cannot be undone.'))return;
   log=[];
-  markUnsaved();renLog();
+  renLog();saveFile();
 }
 
 function exportLog(){
@@ -583,7 +558,7 @@ function doSave(){
     if(wCat){m.tp+=wCat.pts;addLog(eId,"win",wCat.pts,wCat.icon+" "+wCat.label);}
   }
 
-  markUnsaved();ren();closeM();
+  ren();closeM();saveFile();
 }
 
 ren();renT();renR();renE();
