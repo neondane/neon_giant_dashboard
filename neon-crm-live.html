@@ -23,7 +23,7 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 .btn-a{border:none;color:#fff;padding:9px 16px;border-radius:10px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px}
 .btn-mic{background:linear-gradient(135deg,var(--pink),var(--blue));box-shadow:0 3px 16px #e33b9333}
 .btn-cam{background:linear-gradient(135deg,#22aee4,#1a8fc4);box-shadow:0 3px 16px #22aee433}
-.btn-add{background:var(--dark3);border:1px solid var(--dark4)}
+.btn-add{background:var(--dark3);border:1px solid var(--dark4)!important}
 
 .tabs{display:flex;border-bottom:1px solid var(--dark3);padding:0 16px;overflow-x:auto}
 .tab{padding:11px 16px;font-size:12px;font-weight:600;color:var(--gray);border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
@@ -50,9 +50,8 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 .badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:8px;font-weight:600;margin-left:5px}
 .rem-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;padding:2px 7px;border-radius:7px;background:#ff993322;color:var(--orange);border:1px solid #ff993344;margin-top:3px}
 
-/* Loading */
 .loading{text-align:center;padding:60px 20px}
-.loading .spinner{width:40px;height:40px;margin:0 auto 14px;border:3px solid var(--dark3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:40px;height:40px;margin:0 auto 14px;border:3px solid var(--dark3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--dark2);border:1px solid var(--dark3);color:var(--white);padding:10px 20px;border-radius:10px;font-size:13px;z-index:2000;display:none;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .toast.ok{border-color:var(--green);color:var(--green)}
 .toast.err{border-color:var(--red);color:var(--red)}
@@ -78,8 +77,10 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 .rem-sec h5{color:var(--orange);font-size:12px;margin-bottom:7px}
 .rem-item{display:flex;align-items:center;gap:7px;padding:5px 0;font-size:12px;border-bottom:1px solid var(--dark3)}
 .rem-item:last-child{border:none}.rem-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.card-img-sec{background:var(--dark2);border-radius:9px;padding:13px 15px;margin-bottom:16px}
+.card-img-sec h5{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px}
+.card-img-sec img{max-width:100%;border-radius:8px;border:1px solid var(--dark3)}
 
-/* Forms */
 .form-group{margin-bottom:12px}
 .form-group label{display:block;font-size:11px;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
 .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--dark2);border:1px solid var(--dark3);color:var(--white);padding:10px 12px;border-radius:8px;font-size:13px;outline:none}
@@ -96,15 +97,34 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 .fs-save{background:var(--pink);border:none;color:#fff;font-size:13px;padding:8px 16px;border-radius:8px;font-weight:600}
 .fs-body{flex:1;overflow:auto;padding:18px}
 
-.mic{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--blue));border:none;position:relative;box-shadow:0 0 36px #e33b9344,0 0 72px #22aee422;margin:0 auto;display:block}
-.mic svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-.mic.rec{animation:mic-pulse 1.5s ease-in-out infinite}
-@keyframes mic-pulse{0%,100%{box-shadow:0 0 36px #e33b9344}50%{box-shadow:0 0 60px #e33b9388}}
+/* Voice */
+.mic-big{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--blue));border:none;position:relative;box-shadow:0 0 30px #e33b9344;margin:0 auto;display:block}
+.mic-big svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.mic-big.rec{animation:mic-pulse 1.5s ease-in-out infinite}
+@keyframes mic-pulse{0%,100%{box-shadow:0 0 30px #e33b9344}50%{box-shadow:0 0 60px #e33b9388}}
 .lis-badge{display:inline-flex;align-items:center;gap:7px;background:#e33b9322;padding:7px 18px;border-radius:18px;border:1px solid #e33b9344}
 .lis-dot{width:9px;height:9px;border-radius:50%;background:var(--pink);animation:pulse 1s infinite}
-.trns-box{background:var(--dark2);border-radius:11px;padding:16px;color:var(--white);font-size:14px;line-height:1.7;min-height:90px;margin-top:14px}
-.spinner{width:40px;height:40px;margin:0 auto 14px;border:3px solid var(--dark3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+.trns-box{background:var(--dark2);border-radius:11px;padding:16px;color:var(--white);font-size:14px;line-height:1.7;min-height:80px;margin-top:14px}
 
+/* Camera */
+.cam-area{position:relative;width:100%;max-width:400px;margin:0 auto;border-radius:12px;overflow:hidden;background:var(--dark2);border:2px dashed var(--dark4)}
+.cam-area video{width:100%;display:block;border-radius:10px}
+.cam-area canvas{display:none}
+.cam-preview{width:100%;border-radius:10px;display:block}
+.cam-btn{width:64px;height:64px;border-radius:50%;background:var(--white);border:4px solid var(--dark3);margin:14px auto;display:block;position:relative;transition:all .15s}
+.cam-btn:active{transform:scale(0.9)}
+.cam-btn::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--white);border:2px solid var(--dark)}
+.upload-zone{padding:36px 20px;text-align:center;cursor:pointer}
+.upload-zone:hover{background:var(--dark3)}
+
+/* Action buttons row */
+.action-row{display:flex;gap:8px;margin-bottom:16px}
+.action-btn{flex:1;padding:14px;border-radius:12px;border:1px solid var(--dark3);background:var(--dark2);color:var(--white);text-align:center;font-size:13px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s}
+.action-btn:hover{border-color:var(--blue);background:var(--dark3)}
+.action-btn svg{opacity:.7}
+.action-btn.active{border-color:var(--pink);background:#e33b9315}
+
+/* Map */
 #mapBox{width:100%;height:420px;border-radius:11px;overflow:hidden;border:1px solid var(--dark3);margin:12px 0}
 .leaflet-container{background:var(--dark)!important}
 .map-lbl{background:transparent;border:none;font-family:'Outfit',sans-serif;white-space:nowrap}
@@ -118,7 +138,7 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.brand{font-size:14px}.btn-a span{display:none}.btn-a{padding:9px 12px}#mapBox{height:320px}}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.brand{font-size:14px}.btn-a span.bl{display:none}.btn-a{padding:9px 12px}#mapBox{height:320px}}
 </style>
 </head>
 <body>
@@ -129,14 +149,9 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
     <div><div class="brand"><span style="color:var(--pink)">NEON</span> <span style="color:var(--blue)">CRM</span></div><div class="brand-sub">Referral & Outreach Tracker</div></div>
   </div>
   <div class="hdr-actions">
-    <button class="btn-a btn-add" onclick="openAddContact()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>Add</span>
-    </button>
-    <button class="btn-a btn-mic" onclick="openLogVisit()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="1" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="17" x2="12" y2="22"/></svg>
-      <span>Log Visit</span>
-    </button>
+    <button class="btn-a btn-add" onclick="openAddContact()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span class="bl">Add</span></button>
+    <button class="btn-a btn-cam" onclick="openCamera()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg><span class="bl">Card</span></button>
+    <button class="btn-a btn-mic" onclick="openLogVisit()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="1" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="17" x2="12" y2="22"/></svg><span class="bl">Visit</span></button>
   </div>
 </div>
 
@@ -151,16 +166,22 @@ button{font-family:inherit;cursor:pointer}select,input,textarea{font-family:inhe
 
 <div class="overlay" id="ov" onclick="closePanel()"><div class="panel" onclick="event.stopPropagation()" id="pc"></div></div>
 
-<!-- ADD CONTACT FORM -->
+<!-- ADD CONTACT -->
 <div class="fs-overlay" id="addOv">
   <div class="fs-hdr"><button class="fs-cancel" onclick="closeAdd()">✕ Cancel</button><span style="color:var(--white);font-weight:700;font-size:15px">Add Contact</span><div style="width:60px"></div></div>
   <div class="fs-body" id="addBody"></div>
 </div>
 
-<!-- LOG VISIT FORM -->
+<!-- LOG VISIT -->
 <div class="fs-overlay" id="visitOv">
   <div class="fs-hdr"><button class="fs-cancel" onclick="closeVisit()">✕ Cancel</button><span style="color:var(--white);font-weight:700;font-size:15px">Log Visit</span><div style="width:60px"></div></div>
   <div class="fs-body" id="visitBody"></div>
+</div>
+
+<!-- SCAN CARD -->
+<div class="fs-overlay" id="camOv">
+  <div class="fs-hdr"><button class="fs-cancel" onclick="closeCamera()">✕ Cancel</button><span style="color:var(--white);font-weight:700;font-size:15px">Scan Business Card</span><div style="width:60px"></div></div>
+  <div class="fs-body" id="camBody"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -178,53 +199,28 @@ let tab='dash',fT='All Territories',fTy='All Types',fS='',srt='urgency';
 let lmap=null,mMarkers=[];
 let dataLoaded=false;
 
-// ─── API ────────────────────────────────────────────────────
-async function apiGet(action){
-  const r=await fetch(API+'?action='+action);
-  return r.json();
-}
-async function apiPost(data){
-  const r=await fetch(API,{method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'text/plain'}});
-  return r.json();
-}
+async function apiGet(a){const r=await fetch(API+'?action='+a);return r.json()}
+async function apiPost(d){const r=await fetch(API,{method:'POST',body:JSON.stringify(d),headers:{'Content-Type':'text/plain'}});return r.json()}
+function toast(m,t='ok'){const e=document.getElementById('toast');e.textContent=m;e.className='toast '+t;e.style.display='block';setTimeout(()=>{e.style.display='none'},3000)}
 
-function toast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+type;t.style.display='block';
-  setTimeout(()=>{t.style.display='none'},3000);
-}
-
-// ─── LOAD DATA ──────────────────────────────────────────────
 async function loadData(){
   document.getElementById('mc').innerHTML='<div class="loading"><div class="spinner"></div><div style="color:var(--gray);font-size:13px">Loading CRM data...</div></div>';
-  try{
-    const d=await apiGet('getAll');
-    contacts=d.contacts||[];
-    visits=d.visits||[];
-    reminders=(d.reminders||[]).filter(r=>r.status==='active');
-    dataLoaded=true;
-    render();
-  }catch(e){
-    document.getElementById('mc').innerHTML='<div class="loading"><div style="color:var(--red);font-size:14px">Failed to load data</div><div style="color:var(--gray);font-size:12px;margin-top:8px">'+e.message+'</div><button class="btn-a btn-mic" style="margin-top:16px" onclick="loadData()">Retry</button></div>';
-  }
+  try{const d=await apiGet('getAll');contacts=d.contacts||[];visits=d.visits||[];reminders=(d.reminders||[]).filter(r=>r.status==='active');dataLoaded=true;render()}
+  catch(e){document.getElementById('mc').innerHTML='<div class="loading"><div style="color:var(--red)">Failed to load</div><button class="btn-a btn-mic" style="margin:16px auto" onclick="loadData()">Retry</button></div>'}
 }
 
-// ─── HELPERS ────────────────────────────────────────────────
-function ds(d){if(!d)return 999;const dt=typeof d==='string'?new Date(d):d;return Math.floor((new Date()-dt)/864e5)}
+function ds(d){if(!d)return 999;return Math.floor((new Date()-new Date(typeof d==='string'?d:d))/864e5)}
 function uc(d){return d<=14?'var(--green)':d<=30?'var(--blue)':d<=60?'var(--orange)':'var(--red)'}
 function uh(d){return d<=14?'#33cc66':d<=30?'#22aee4':d<=60?'#ff9933':'#ff3366'}
-function fd(d){if(!d)return'—';const dt=typeof d==='string'?new Date(d+'T00:00:00'):new Date(d);return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
-
-function getContactReminders(cid){return reminders.filter(r=>Number(r.contactId)===Number(cid))}
+function fd(d){if(!d)return'—';return new Date((typeof d==='string'?d+'T00:00:00':d)).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function getCR(cid){return reminders.filter(r=>Number(r.contactId)===Number(cid))}
 
 function switchTab(t,el){tab=t;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
-
 function render(){if(!dataLoaded)return;renderStats();const mc=document.getElementById('mc');if(tab==='dash')renderDash(mc);else if(tab==='map')renderMap(mc);else renderRem(mc)}
 
 function renderStats(){
-  const t=contacts.length,o=contacts.filter(c=>ds(c.lastVisit)>30).length;
-  const h=contacts.filter(c=>Number(c.score)===0).length,r=reminders.length;
-  document.getElementById('statsRow').innerHTML=`<div class="st"><div class="st-v" style="color:var(--white)">${t}</div><div class="st-l">Contacts</div></div><div class="st"><div class="st-v" style="color:var(--red)">${o}</div><div class="st-l">Overdue 30d+</div></div><div class="st"><div class="st-v" style="color:var(--pink)">${h}</div><div class="st-l">Hot Leads</div></div><div class="st"><div class="st-v" style="color:var(--orange)">${r}</div><div class="st-l">Reminders</div></div>`;
+  const t=contacts.length,o=contacts.filter(c=>ds(c.lastVisit)>30).length,h=contacts.filter(c=>Number(c.score)===0).length;
+  document.getElementById('statsRow').innerHTML=`<div class="st"><div class="st-v" style="color:var(--white)">${t}</div><div class="st-l">Contacts</div></div><div class="st"><div class="st-v" style="color:var(--red)">${o}</div><div class="st-l">Overdue 30d+</div></div><div class="st"><div class="st-v" style="color:var(--pink)">${h}</div><div class="st-l">Hot Leads</div></div><div class="st"><div class="st-v" style="color:var(--orange)">${reminders.length}</div><div class="st-l">Reminders</div></div>`;
 }
 
 function getF(){
@@ -236,20 +232,18 @@ function getF(){
 }
 
 function ccHTML(c){
-  const d=ds(c.lastVisit),s=SC[Number(c.score)||0],cr=getContactReminders(c.id);
-  const rb=cr.length?`<div class="rem-badge">📌 ${cr.length} reminder${cr.length>1?'s':''}</div>`:'';
+  const d=ds(c.lastVisit),s=SC[Number(c.score)||0],cr=getCR(c.id);
+  const rb=cr.length?`<div class="rem-badge">📌 ${cr.length}</div>`:'';
   return`<div class="card" style="border-left-color:${uc(d)}" onclick="openPanel(${c.id})"><div class="card-top"><div style="flex:1;min-width:0"><div><span class="c-name">${c.name||'—'}</span><span class="badge" style="background:${s.c}22;color:${s.c}">${s.e} ${s.l}</span></div><div class="c-role">${c.role||''} · <span class="c-biz">${c.business||''}</span></div><div class="c-meta"><span>📍 ${c.territory||'—'}</span><span>👤 ${c.handler||'—'}</span><span class="ref">🎁 ${c.referrals||0}</span></div>${rb}</div><div class="c-days"><b style="color:${uc(d)}">${d}d</b><small>since visit</small></div></div></div>`;
 }
 
 function renderDash(mc){
   const tb={};contacts.forEach(c=>{const t=c.type||'Other';tb[t]=(tb[t]||0)+1});
-  let pills=Object.entries(tb).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<span class="pill${fTy===t?' on':''}" onclick="fTy=fTy==='${t}'?'All Types':'${t}';render()">${t} <b style="color:var(--white)">${n}</b></span>`).join('');
   const f=getF();
-  const empty=contacts.length===0?`<div style="text-align:center;padding:40px;color:var(--gray)"><div style="font-size:16px;margin-bottom:8px">No contacts yet</div><div style="font-size:13px">Click <b>Add</b> to create your first contact, or import from your old spreadsheet.</div></div>`:'';
-  mc.innerHTML=`<div class="pills">${pills}</div><div class="filters"><input type="text" placeholder="Search contacts..." value="${fS}" oninput="fS=this.value;render()"><select onchange="fT=this.value;render()">${TERR.map(t=>`<option${fT===t?' selected':''}>${t}</option>`).join('')}</select><select onchange="srt=this.value;render()"><option value="urgency"${srt==='urgency'?' selected':''}>Most Overdue</option><option value="referrals"${srt==='referrals'?' selected':''}>Most Referrals</option><option value="name"${srt==='name'?' selected':''}>Name A-Z</option></select></div><div style="color:var(--gray);font-size:11px;margin-bottom:8px">${f.length} contact${f.length!==1?'s':''}</div>${empty}${f.map(c=>ccHTML(c)).join('')}`;
+  mc.innerHTML=`<div class="pills">${Object.entries(tb).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<span class="pill${fTy===t?' on':''}" onclick="fTy=fTy==='${t}'?'All Types':'${t}';render()">${t} <b style="color:var(--white)">${n}</b></span>`).join('')}</div><div class="filters"><input placeholder="Search contacts..." value="${fS}" oninput="fS=this.value;render()"><select onchange="fT=this.value;render()">${TERR.map(t=>`<option${fT===t?' selected':''}>${t}</option>`).join('')}</select><select onchange="srt=this.value;render()"><option value="urgency"${srt==='urgency'?' selected':''}>Most Overdue</option><option value="referrals"${srt==='referrals'?' selected':''}>Most Referrals</option><option value="name"${srt==='name'?' selected':''}>Name A-Z</option></select></div><div style="color:var(--gray);font-size:11px;margin-bottom:8px">${f.length} contact${f.length!==1?'s':''}</div>${contacts.length===0?'<div style="text-align:center;padding:40px;color:var(--gray)"><div style="font-size:16px;margin-bottom:8px">No contacts yet</div><div style="font-size:13px">Click <b>Add</b>, <b>Card</b>, or <b>Visit</b> to get started.</div></div>':''}${f.map(c=>ccHTML(c)).join('')}`;
 }
 
-// ─── MAP ────────────────────────────────────────────────────
+// ─── MAP ────
 function renderMap(mc){
   const f=getF();
   mc.innerHTML=`<div style="margin:10px 0 5px;font-size:12px;color:var(--gray)">Click a territory to filter</div><div id="mapBox"></div><div id="mapInfo" style="color:var(--gray);font-size:11px;margin:8px 0">${fT!=='All Territories'?`<b style="color:var(--blue)">${fT}</b> — `:''}${f.length} contact${f.length!==1?'s':''}</div><div id="mapCards">${f.map(c=>ccHTML(c)).join('')}</div>`;
@@ -262,60 +256,43 @@ function initMap(){
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18}).addTo(lmap);
   const tc={},tw={};contacts.forEach(c=>{if(!c.territory)return;tc[c.territory]=(tc[c.territory]||0)+1;const d=ds(c.lastVisit);if(!tw[c.territory]||d>tw[c.territory])tw[c.territory]=d});
   Object.entries(TC).forEach(([nm,co])=>{
-    const cnt=tc[nm]||0,worst=tw[nm]||0,col=uh(worst),sel=fT===nm;
-    const r=Math.max(11,Math.min(28,9+cnt*4));
+    const cnt=tc[nm]||0,worst=tw[nm]||0,col=uh(worst),sel=fT===nm,r=Math.max(11,Math.min(28,9+cnt*4));
     const ci=L.circleMarker(co,{radius:r,fillColor:sel?'#22aee4':col,color:sel?'#22aee4':col,weight:sel?3:2,opacity:sel?1:.8,fillOpacity:sel?.4:.2}).addTo(lmap);
     const lb=L.marker(co,{icon:L.divIcon({className:'map-lbl',html:`<div><div class="ml-name${sel?' ml-sel':''}">${nm}</div><div class="ml-cnt">${cnt}</div></div>`,iconSize:[120,36],iconAnchor:[60,18]})}).addTo(lmap);
     const tc2=contacts.filter(c=>c.territory===nm);
     let pp=`<div style="min-width:180px"><b style="color:#e33b93">${nm}</b><br><span style="color:#8888aa;font-size:10px">${cnt} contacts</span><hr style="border-color:#1a1a25;margin:5px 0">`;
     tc2.forEach(c=>{const d=ds(c.lastVisit);pp+=`<div style="margin:3px 0;cursor:pointer" onclick="openPanel(${c.id})"><span style="color:${uh(d)};font-weight:700">${d}d</span> ${c.name} <span style="color:#8888aa;font-size:10px">· ${c.role||''}</span></div>`});
     pp+=`</div>`;ci.bindPopup(pp,{className:'neon-pop',maxWidth:260});
-    const click=()=>{fT=fT===nm?'All Territories':nm;const f2=getF();const ce=document.getElementById('mapCards');if(ce)ce.innerHTML=f2.map(x=>ccHTML(x)).join('');updMap()};
+    const click=()=>{fT=fT===nm?'All Territories':nm;const f2=getF();document.getElementById('mapCards').innerHTML=f2.map(x=>ccHTML(x)).join('');updMap()};
     ci.on('click',click);lb.on('click',click);mMarkers.push({nm,ci,lb});
   });
 }
 function updMap(){const tc={},tw={};contacts.forEach(c=>{if(!c.territory)return;tc[c.territory]=(tc[c.territory]||0)+1;const d=ds(c.lastVisit);if(!tw[c.territory]||d>tw[c.territory])tw[c.territory]=d});mMarkers.forEach(({nm,ci,lb})=>{const col=uh(tw[nm]||0),sel=fT===nm;ci.setStyle({fillColor:sel?'#22aee4':col,color:sel?'#22aee4':col,weight:sel?3:2});lb.setIcon(L.divIcon({className:'map-lbl',html:`<div><div class="ml-name${sel?' ml-sel':''}">${nm}</div><div class="ml-cnt">${tc[nm]||0}</div></div>`,iconSize:[120,36],iconAnchor:[60,18]}))})}
 
-// ─── REMINDERS ──────────────────────────────────────────────
+// ─── REMINDERS ────
 function renderRem(mc){
-  const grouped={};reminders.forEach(r=>{const cid=Number(r.contactId);if(!grouped[cid])grouped[cid]=[];grouped[cid].push(r)});
-  const entries=Object.entries(grouped).map(([cid,rems])=>{const c=contacts.find(x=>Number(x.id)===Number(cid));return{c,rems}}).filter(x=>x.c).sort((a,b)=>ds(b.c.lastVisit)-ds(a.c.lastVisit));
-  let h=`<div style="margin:14px 0 10px;font-size:13px;color:var(--gray)">${entries.length} contacts with active reminders</div>`;
-  entries.forEach(({c,rems})=>{const d=ds(c.lastVisit);h+=`<div class="card" style="border-left-color:var(--orange);margin-bottom:10px" onclick="openPanel(${c.id})"><div class="card-top"><div style="flex:1"><div class="c-name">${c.name} <span style="color:var(--gray);font-size:11px;font-weight:400">at ${c.business||''}</span></div><div class="c-role">📍 ${c.territory||''} · Last: ${fd(c.lastVisit)} (${d}d)</div></div></div><div style="margin-top:7px">${rems.map(r=>`<div class="rem-badge" style="margin:2px 3px 2px 0">📌 ${r.text}</div>`).join('')}</div></div>`});
+  const g={};reminders.forEach(r=>{const cid=Number(r.contactId);if(!g[cid])g[cid]=[];g[cid].push(r)});
+  const entries=Object.entries(g).map(([cid,rems])=>({c:contacts.find(x=>Number(x.id)===Number(cid)),rems})).filter(x=>x.c).sort((a,b)=>ds(b.c.lastVisit)-ds(a.c.lastVisit));
+  let h=`<div style="margin:14px 0 10px;font-size:13px;color:var(--gray)">${entries.length} contacts with reminders</div>`;
+  entries.forEach(({c,rems})=>{const d=ds(c.lastVisit);h+=`<div class="card" style="border-left-color:var(--orange);margin-bottom:10px" onclick="openPanel(${c.id})"><div class="card-top"><div style="flex:1"><div class="c-name">${c.name} <span style="color:var(--gray);font-size:11px;font-weight:400">at ${c.business||''}</span></div><div class="c-role">📍 ${c.territory||''} · ${fd(c.lastVisit)} (${d}d)</div></div></div><div style="margin-top:7px">${rems.map(r=>`<div class="rem-badge" style="margin:2px 3px">📌 ${r.text}</div>`).join('')}</div></div>`});
   if(!entries.length)h+=`<div style="text-align:center;padding:50px;color:var(--gray)">No active reminders.</div>`;
   mc.innerHTML=h;
 }
 
-// ─── CONTACT PANEL ──────────────────────────────────────────
+// ─── PANEL ────
 function openPanel(id){
   const c=contacts.find(x=>Number(x.id)===Number(id));if(!c)return;
-  const d=ds(c.lastVisit),s=SC[Number(c.score)||0],cv=visits.filter(v=>Number(v.contactId)===Number(id)),cr=getContactReminders(id);
-  let rs='';if(cr.length){rs=`<div class="rem-sec"><h5>📌 Reminders</h5>${cr.map(r=>`<div class="rem-item"><span class="rem-dot"></span>${r.text}</div>`).join('')}</div>`}
+  const d=ds(c.lastVisit),s=SC[Number(c.score)||0],cv=visits.filter(v=>Number(v.contactId)===Number(id)),cr=getCR(id);
+  let rs='';if(cr.length)rs=`<div class="rem-sec"><h5>📌 Reminders</h5>${cr.map(r=>`<div class="rem-item"><span class="rem-dot"></span>${r.text}</div>`).join('')}</div>`;
+  let cardSec='';if(c.cardImage)cardSec=`<div class="card-img-sec"><h5>📇 Business Card</h5><img src="${c.cardImage}" alt="card"></div>`;
   let vh=cv.map(v=>`<div class="visit"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="vd">${fd(v.date)}</span><span class="vh">${v.handler}</span></div><div class="vn">${v.notes||''}</div></div>`).join('');
   if(c.notes)vh+=`<div class="visit orig"><div style="color:var(--gray);font-size:11px;margin-bottom:4px">Notes</div><div class="vn">${c.notes}</div></div>`;
-  document.getElementById('pc').innerHTML=`
-    <div class="p-hdr"><div><div style="font-size:19px;font-weight:700">${c.name||'—'}</div><div style="color:var(--gray);font-size:12px;margin-top:2px">${c.role||''} at ${c.business||''}</div></div><button class="p-close" onclick="closePanel()">✕</button></div>
-    <div class="p-body">
-      <div class="p-stats"><div class="p-st"><div class="v" style="color:${s.c}">${s.e}</div><div class="l" style="color:${s.c}">${s.l}</div></div><div class="p-st"><div class="v" style="color:var(--pink)">${c.referrals||0}</div><div class="l">Referrals</div></div><div class="p-st"><div class="v" style="color:${uc(d)}">${d}d</div><div class="l">Since Visit</div></div></div>
-      ${rs}
-      <div class="p-info"><h5>Contact Info</h5>
-        <div class="p-row"><span class="k">Phone</span><span class="val">${c.phone||'—'}</span></div>
-        <div class="p-row"><span class="k">Email</span><span class="val">${c.email||'—'}</span></div>
-        <div class="p-row"><span class="k">Territory</span><span class="val">${c.territory||'—'}</span></div>
-        <div class="p-row"><span class="k">Type</span><span class="val">${c.type||'—'}</span></div>
-        <div class="p-row"><span class="k">Point Person</span><span class="val">${c.handler||'—'}</span></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px">
-        <button class="btn-a btn-mic" style="flex:1;justify-content:center" onclick="closePanel();openLogVisit(${c.id})">Log Visit</button>
-      </div>
-      <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:9px">Visit History (${cv.length})</div>
-      ${vh||'<div style="color:var(--gray);font-size:12px">No visits logged yet</div>'}
-    </div>`;
+  document.getElementById('pc').innerHTML=`<div class="p-hdr"><div><div style="font-size:19px;font-weight:700">${c.name||'—'}</div><div style="color:var(--gray);font-size:12px;margin-top:2px">${c.role||''} at ${c.business||''}</div></div><button class="p-close" onclick="closePanel()">✕</button></div><div class="p-body"><div class="p-stats"><div class="p-st"><div class="v" style="color:${s.c}">${s.e}</div><div class="l" style="color:${s.c}">${s.l}</div></div><div class="p-st"><div class="v" style="color:var(--pink)">${c.referrals||0}</div><div class="l">Referrals</div></div><div class="p-st"><div class="v" style="color:${uc(d)}">${d}d</div><div class="l">Since Visit</div></div></div>${rs}${cardSec}<div class="p-info"><h5>Contact Info</h5><div class="p-row"><span class="k">Phone</span><span class="val">${c.phone||'—'}</span></div><div class="p-row"><span class="k">Email</span><span class="val">${c.email||'—'}</span></div><div class="p-row"><span class="k">Territory</span><span class="val">${c.territory||'—'}</span></div><div class="p-row"><span class="k">Type</span><span class="val">${c.type||'—'}</span></div><div class="p-row"><span class="k">Point Person</span><span class="val">${c.handler||'—'}</span></div></div><div style="display:flex;gap:8px;margin-bottom:16px"><button class="btn-a btn-mic" style="flex:1;justify-content:center" onclick="closePanel();openLogVisit(${c.id})">Log Visit</button></div><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:9px">Visit History (${cv.length})</div>${vh||'<div style="color:var(--gray);font-size:12px">No visits yet</div>'}</div>`;
   document.getElementById('ov').classList.add('open');
 }
 function closePanel(){document.getElementById('ov').classList.remove('open')}
 
-// ─── ADD CONTACT FORM ───────────────────────────────────────
+// ─── ADD CONTACT ────
 function openAddContact(){
   document.getElementById('addOv').classList.add('open');
   document.getElementById('addBody').innerHTML=`
@@ -324,65 +301,172 @@ function openAddContact(){
     <div class="form-row"><div class="form-group"><label>Business Type</label><select id="ac_type">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>Territory</label><select id="ac_terr">${TERR.slice(1).map(t=>`<option>${t}</option>`).join('')}</select></div></div>
     <div class="form-row"><div class="form-group"><label>Phone</label><input id="ac_ph" placeholder="360-555-0000"></div><div class="form-group"><label>Email</label><input id="ac_em" placeholder="name@company.com"></div></div>
     <div class="form-row"><div class="form-group"><label>Handled By</label><select id="ac_by">${TEAM.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>Lead Score</label><select id="ac_sc"><option value="3">🆕 New</option><option value="2">❄️ Cool</option><option value="1">☀️ Warm</option><option value="0">🔥 Hot</option></select></div></div>
-    <div class="form-group"><label>Notes</label><textarea id="ac_notes" placeholder="Any notes about this contact..."></textarea></div>
+    <div class="form-group"><label>Notes</label><textarea id="ac_notes" placeholder="Notes about this contact..."></textarea></div>
     <button class="btn-submit" onclick="submitContact()">Save Contact</button>
     <button class="btn-cancel" onclick="closeAdd()">Cancel</button>`;
 }
 function closeAdd(){document.getElementById('addOv').classList.remove('open')}
-
 async function submitContact(){
-  const c={
-    name:document.getElementById('ac_name').value,
-    role:document.getElementById('ac_role').value,
-    business:document.getElementById('ac_biz').value,
-    type:document.getElementById('ac_type').value,
-    territory:document.getElementById('ac_terr').value,
-    phone:document.getElementById('ac_ph').value,
-    email:document.getElementById('ac_em').value,
-    handler:document.getElementById('ac_by').value,
-    score:Number(document.getElementById('ac_sc').value),
-    notes:document.getElementById('ac_notes').value,
-    referrals:0
-  };
-  if(!c.name){toast('Please enter a contact name','err');return}
-  toast('Saving contact...','ok');
-  try{
-    const r=await apiPost({action:'addContact',contact:c});
-    if(r.success){toast('✅ Contact saved!','ok');closeAdd();await loadData()}
-    else{toast('Error: '+(r.error||'Unknown'),'err')}
-  }catch(e){toast('Error: '+e.message,'err')}
+  const c={name:document.getElementById('ac_name').value,role:document.getElementById('ac_role').value,business:document.getElementById('ac_biz').value,type:document.getElementById('ac_type').value,territory:document.getElementById('ac_terr').value,phone:document.getElementById('ac_ph').value,email:document.getElementById('ac_em').value,handler:document.getElementById('ac_by').value,score:Number(document.getElementById('ac_sc').value),notes:document.getElementById('ac_notes').value,referrals:0};
+  if(!c.name){toast('Enter a contact name','err');return}
+  toast('Saving...','ok');
+  try{const r=await apiPost({action:'addContact',contact:c});if(r.success){toast('✅ Saved!','ok');closeAdd();await loadData()}else toast('Error: '+(r.error||''),'err')}catch(e){toast('Error: '+e.message,'err')}
 }
 
-// ─── LOG VISIT FORM ─────────────────────────────────────────
+// ─── LOG VISIT (with voice) ────
+let recognition=null,isRecording=false;
+
 function openLogVisit(preselect){
   document.getElementById('visitOv').classList.add('open');
-  const opts=contacts.map(c=>`<option value="${c.id}"${Number(c.id)===Number(preselect)?' selected':''}>${c.name} — ${c.business}</option>`).join('');
+  const opts=contacts.map(c=>`<option value="${c.id}"${Number(c.id)===Number(preselect)?' selected':''}>${c.name} — ${c.business||''}</option>`).join('');
   document.getElementById('visitBody').innerHTML=`
-    <div class="form-group"><label>Contact</label><select id="lv_cid">${opts}</select></div>
+    <div class="form-group"><label>Contact</label><select id="lv_cid">${contacts.length?opts:'<option>No contacts yet — add one first</option>'}</select></div>
+
+    <div style="text-align:center;margin:16px 0 8px;color:var(--gray);font-size:12px">Tap the mic to dictate your notes</div>
+    <button class="mic-big" id="micBtn" onclick="toggleVoice()"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="9" y="1" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
+    <div id="voiceStatus" style="text-align:center;margin-top:8px;font-size:12px;color:var(--gray)"></div>
+
+    <div class="form-group" style="margin-top:16px"><label>Visit Notes</label><textarea id="lv_notes" rows="4" placeholder="Tap mic above to talk, or type here..."></textarea></div>
     <div class="form-row"><div class="form-group"><label>Handled By</label><select id="lv_by">${TEAM.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>Date</label><input id="lv_date" type="date" value="${new Date().toISOString().split('T')[0]}"></div></div>
-    <div class="form-group"><label>Visit Notes</label><textarea id="lv_notes" rows="4" placeholder="What happened? What did you talk about?"></textarea></div>
-    <div class="form-group"><label>Add Reminder (optional)</label><input id="lv_rem" placeholder="e.g. Drop off more flyers next time"></div>
+    <div class="form-group"><label>Add Reminder (optional)</label><input id="lv_rem" placeholder="e.g. Drop off flyers next time"></div>
     <button class="btn-submit" onclick="submitVisit()">Save Visit</button>
     <button class="btn-cancel" onclick="closeVisit()">Cancel</button>`;
 }
-function closeVisit(){document.getElementById('visitOv').classList.remove('open')}
+function closeVisit(){document.getElementById('visitOv').classList.remove('open');stopVoice()}
+
+function toggleVoice(){
+  if(isRecording){stopVoice()}else{startVoice()}
+}
+
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('Voice not supported in this browser','err');return}
+  recognition=new SR();recognition.continuous=true;recognition.interimResults=true;recognition.lang='en-US';
+  isRecording=true;
+  document.getElementById('micBtn').classList.add('rec');
+  document.getElementById('voiceStatus').innerHTML='<div class="lis-badge"><span class="lis-dot"></span><span style="color:var(--pink);font-weight:600">Listening... tap mic to stop</span></div>';
+
+  let finalTranscript=document.getElementById('lv_notes').value;
+  recognition.onresult=(e)=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalTranscript+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    document.getElementById('lv_notes').value=finalTranscript+interim;
+  };
+  recognition.onerror=(e)=>{stopVoice();if(e.error!=='aborted')toast('Voice error: '+e.error,'err')};
+  recognition.onend=()=>{if(isRecording){try{recognition.start()}catch(e){stopVoice()}}};
+  recognition.start();
+}
+
+function stopVoice(){
+  isRecording=false;
+  if(recognition)try{recognition.stop()}catch(e){}
+  const btn=document.getElementById('micBtn');if(btn)btn.classList.remove('rec');
+  const st=document.getElementById('voiceStatus');if(st)st.innerHTML='<span style="color:var(--green)">✓ Voice captured</span>';
+}
 
 async function submitVisit(){
   const cid=document.getElementById('lv_cid').value;
   const v={contactId:Number(cid),handler:document.getElementById('lv_by').value,date:document.getElementById('lv_date').value,notes:document.getElementById('lv_notes').value};
   const remText=document.getElementById('lv_rem').value;
-  if(!v.notes){toast('Please add some notes','err');return}
-  toast('Saving visit...','ok');
+  if(!v.notes){toast('Add some notes','err');return}
+  if(!contacts.length){toast('Add a contact first','err');return}
+  toast('Saving...','ok');
   try{
     const r=await apiPost({action:'addVisit',visit:v});
-    if(r.success){
-      if(remText){await apiPost({action:'addReminder',reminder:{contactId:Number(cid),text:remText}})}
-      toast('✅ Visit logged!','ok');closeVisit();await loadData();
-    }else{toast('Error: '+(r.error||'Unknown'),'err')}
+    if(r.success){if(remText)await apiPost({action:'addReminder',reminder:{contactId:Number(cid),text:remText}});toast('✅ Visit saved!','ok');closeVisit();await loadData()}
+    else toast('Error: '+(r.error||''),'err');
   }catch(e){toast('Error: '+e.message,'err')}
 }
 
-// ─── INIT ───────────────────────────────────────────────────
+// ─── SCAN CARD ────
+let camStream=null,capturedImg=null;
+
+function openCamera(){
+  document.getElementById('camOv').classList.add('open');
+  renderCamChoose();
+}
+function closeCamera(){document.getElementById('camOv').classList.remove('open');stopCam();capturedImg=null}
+function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}}
+
+function renderCamChoose(){
+  document.getElementById('camBody').innerHTML=`
+    <div style="text-align:center;padding-top:20px">
+      <div style="color:var(--gray);font-size:14px;margin-bottom:24px;line-height:1.6">Snap a photo of a business card<br>or upload from your gallery.</div>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto">
+        <button class="btn-a btn-cam" style="justify-content:center;padding:16px;border-radius:12px;font-size:15px;width:100%" onclick="startCam()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span style="display:inline!important">Take Photo</span>
+        </button>
+        <div class="cam-area upload-zone" onclick="document.getElementById('fileIn').click()">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gray)" stroke-width="1.5" style="margin-bottom:6px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="color:var(--gray);font-size:13px">Upload from Gallery</div>
+        </div>
+        <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="handleUpload(event)">
+      </div>
+    </div>`;
+}
+
+async function startCam(){
+  document.getElementById('camBody').innerHTML=`
+    <div class="cam-area" style="margin:0 auto"><video id="camVid" autoplay playsinline></video><canvas id="camCan"></canvas></div>
+    <button class="cam-btn" onclick="capturePhoto()"></button>
+    <div style="text-align:center;color:var(--gray);font-size:11px">Position the card and tap</div>`;
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}}});
+    document.getElementById('camVid').srcObject=camStream;
+  }catch(e){toast('Camera not available — use upload','err');renderCamChoose()}
+}
+
+function capturePhoto(){
+  const vid=document.getElementById('camVid'),can=document.getElementById('camCan');
+  can.width=vid.videoWidth;can.height=vid.videoHeight;
+  can.getContext('2d').drawImage(vid,0,0);
+  capturedImg=can.toDataURL('image/jpeg',0.8);
+  stopCam();renderCamPreview();
+}
+
+function handleUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{capturedImg=ev.target.result;renderCamPreview()};
+  reader.readAsDataURL(file);
+}
+
+function renderCamPreview(){
+  document.getElementById('camBody').innerHTML=`
+    <div style="text-align:center;margin-bottom:10px;color:var(--gray);font-size:12px">Card captured! Fill in the details below.</div>
+    <div class="cam-area" style="margin:0 auto;max-width:360px;border-style:solid;border-color:var(--blue)"><img src="${capturedImg}" class="cam-preview" alt="card"></div>
+    <div style="text-align:center;margin:10px 0"><button class="btn-cancel" style="width:auto;display:inline-block;padding:6px 16px;margin:0" onclick="capturedImg=null;renderCamChoose()">Retake</button></div>
+
+    <div class="form-row"><div class="form-group"><label>Contact Name</label><input id="cc_name" placeholder="Name from card"></div><div class="form-group"><label>Role / Title</label><input id="cc_role" placeholder="Their title"></div></div>
+    <div class="form-group"><label>Business Name</label><input id="cc_biz" placeholder="Company name"></div>
+    <div class="form-row"><div class="form-group"><label>Phone</label><input id="cc_ph" placeholder="Phone from card"></div><div class="form-group"><label>Email</label><input id="cc_em" placeholder="Email from card"></div></div>
+    <div class="form-row"><div class="form-group"><label>Business Type</label><select id="cc_type">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>Territory</label><select id="cc_terr">${TERR.slice(1).map(t=>`<option>${t}</option>`).join('')}</select></div></div>
+    <div class="form-row"><div class="form-group"><label>Handled By</label><select id="cc_by">${TEAM.map(t=>`<option>${t}</option>`).join('')}</select></div><div class="form-group"><label>Lead Score</label><select id="cc_sc"><option value="3">🆕 New</option><option value="2">❄️ Cool</option><option value="1">☀️ Warm</option><option value="0">🔥 Hot</option></select></div></div>
+    <div class="form-group"><label>Notes</label><textarea id="cc_notes" placeholder="Notes from your conversation..."></textarea></div>
+    <div class="form-group"><label>Reminder (optional)</label><input id="cc_rem" placeholder="e.g. Follow up next week"></div>
+    <button class="btn-submit" onclick="submitCard()">Save Contact</button>
+    <button class="btn-cancel" onclick="closeCamera()">Cancel</button>`;
+}
+
+async function submitCard(){
+  const c={name:document.getElementById('cc_name').value,role:document.getElementById('cc_role').value,business:document.getElementById('cc_biz').value,phone:document.getElementById('cc_ph').value,email:document.getElementById('cc_em').value,type:document.getElementById('cc_type').value,territory:document.getElementById('cc_terr').value,handler:document.getElementById('cc_by').value,score:Number(document.getElementById('cc_sc').value),notes:document.getElementById('cc_notes').value,referrals:0,cardImage:capturedImg||''};
+  if(!c.name){toast('Enter a contact name','err');return}
+  toast('Saving...','ok');
+  const remText=document.getElementById('cc_rem').value;
+  try{
+    const r=await apiPost({action:'addContact',contact:c});
+    if(r.success){
+      if(remText)await apiPost({action:'addReminder',reminder:{contactId:r.id,text:remText}});
+      toast('✅ Contact saved!','ok');closeCamera();await loadData();
+    }else toast('Error: '+(r.error||''),'err');
+  }catch(e){toast('Error: '+e.message,'err')}
+}
+
+// ─── INIT ───
 loadData();
 </script>
 </body>
