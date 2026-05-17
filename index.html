@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Giant Executive Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0f;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-image: radial-gradient(circle at 50% 30%, rgba(255,0,170,0.18), transparent 60%);
+    padding: 24px;
+  }
+  .gate {
+    background: #14141c;
+    border: 1px solid #2a2a35;
+    border-radius: 14px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #ff00aa, #00e0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .sub { color: #8a8a99; font-size: 13px; margin-bottom: 32px; letter-spacing: 1px; text-transform: uppercase; }
+  input[type=password] {
+    width: 100%;
+    background: #0a0a0f;
+    border: 1px solid #2a2a35;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #fff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 8px;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus { border-color: #ff00aa; }
+  button {
+    width: 100%;
+    background: linear-gradient(90deg, #ff00aa, #aa00ff);
+    color: #fff;
+    border: none;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.1s, transform 0.1s;
+  }
+  button:hover { opacity: 0.92; }
+  button:active { transform: translateY(1px); }
+  .err { color: #ff4477; font-size: 13px; margin-top: 12px; min-height: 18px; }
+</style>
+</head>
+<body>
+  <form class="gate" onsubmit="check(event)">
+    <h1>NEON GIANT</h1>
+    <div class="sub">Executive Dashboard</div>
+    <input id="code" type="password" inputmode="numeric" autocomplete="off" autofocus maxlength="20" />
+    <button type="submit">Enter</button>
+    <div class="err" id="err"></div>
+  </form>
+  <script>
+    if (sessionStorage.getItem('ng_dash_auth') === '1') {
+      location.replace('dashboard.html');
+    }
+    function check(e) {
+      e.preventDefault();
+      var v = document.getElementById('code').value.trim();
+      if (v === '4700') {
+        sessionStorage.setItem('ng_dash_auth', '1');
+        location.replace('dashboard.html');
+      } else {
+        document.getElementById('err').textContent = 'Incorrect code';
+        document.getElementById('code').value = '';
+        document.getElementById('code').focus();
+      }
+    }
+  </script>
+</body>
+</html>
